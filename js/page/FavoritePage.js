@@ -8,14 +8,23 @@
  */
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Button} from 'react-native';
+
+import {connect} from 'react-redux';
+import actions from '../redux/action';
 
 type Props = {};
-export default class Favorite extends Component<Props> {
+class Favorite extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>Favorite</Text>
+        <Button 
+          title="改变主题颜色"
+          onPress={() => {
+            this.props.onThemeChange('pink');
+          }}
+        />
       </View>
     );
   }
@@ -34,3 +43,10 @@ const styles = StyleSheet.create({
     margin: 10,
   }
 });
+
+const mapStateToProps = state => ({});
+const mapDispatchToProps = dispatch => ({
+  onThemeChange: theme => dispatch(actions.onThemeChange(theme))
+});
+
+export default connect(mapStateToProps,mapDispatchToProps)(Favorite);
