@@ -8,29 +8,44 @@
  */
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-
-import { createMaterialTopTabNavigator } from 'react-navigation';
+import {StyleSheet, Text, View } from 'react-native';
+import { 
+  createMaterialTopTabNavigator, 
+  createAppContainer
+} from 'react-navigation';
+import NavigationUtil from '../navigator/NavigationUtil';
 
 type Props = {};
 export default class Popuilar extends Component<Props> {
   render() {
-    const TabNavigator =  createMaterialTopTabNavigator({})
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>Popuilar</Text>
-      </View>
-    );
+    const TabNavigator =  createAppContainer(createMaterialTopTabNavigator({
+      PopuilarTab1: {
+        screen: PopuilarTab,
+        navigationOptions: {
+          title: 'Tab1'
+        }
+      },
+      PopuilarTab2: {
+        screen: PopuilarTab,
+        navigationOptions: {
+          title: 'Tab2'
+        }
+      }
+    }))
+    return <TabNavigator />
   }
 }
 
 // Tab对应的页面
 class PopuilarTab extends Component<Props> {
   render() {
-    const TabNavigator =  createMaterialTopTabNavigator({})
+    const {TabLabel} =  this.props;
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Popuilar</Text>
+        {/* <Text>{TabLabel}</Text> */}
+        <Text onPress={() => {
+          NavigationUtil.GoPage(this.props, 'DetailPage');
+        }}>跳转到详情页面</Text>
       </View>
     );
   }
@@ -39,13 +54,6 @@ class PopuilarTab extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
   }
 });

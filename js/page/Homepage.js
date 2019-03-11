@@ -13,6 +13,8 @@ import {
   createBottomTabNavigator,
   createAppContainer
 } from 'react-navigation';
+import NavigationUtil from '../navigator/NavigationUtil';
+import DynamicTabNavigator from '../navigator/DynamicTabNavigator';
 import PopularPage from './PopularPage';
 import TrendingPage from './TrendingPage';
 import FavoritePage from './FavoritePage';
@@ -23,65 +25,11 @@ import Entypo from 'react-native-vector-icons/Entypo';
 
 type Props = {};
 export default class Home extends Component<Props> {
-  _tabNavigator () {
-    return createBottomTabNavigator({
-        PopularPage:{
-          screen: PopularPage,
-          navigationOptions: {
-            tabBarLabel: '最热',
-            tabBarIcon: ({tintColor, focused}) => (
-              <MaterialIcons 
-                name={'whatshot'}
-                size={26}
-                style={{color: tintColor}}
-              />
-            )
-          }
-        },
-        TrendingPage:{
-          screen: TrendingPage,
-          navigationOptions: {
-            tabBarLabel: '趋势',
-            tabBarIcon: ({tintColor, focused}) => (
-              <Ionicons 
-                name={'md-trending-up'}
-                size={26}
-                style={{color: tintColor}}
-              />
-            )
-          }
-        },
-        FavoritePage:{
-          screen: FavoritePage,
-          navigationOptions: {
-            tabBarLabel: '收藏',
-            tabBarIcon: ({tintColor, focused}) => (
-              <MaterialIcons 
-                name={'favorite'}
-                size={26}
-                style={{color: tintColor}}
-              />
-            )
-          }
-        },
-        Mypage:{
-          screen: Mypage,
-          navigationOptions: {
-            tabBarLabel: '我的',
-            tabBarIcon: ({tintColor, focused}) => (
-              <Entypo 
-                name={'user'}
-                size={26}
-                style={{color: tintColor}}
-              />
-            )
-          }
-        }
-      })
-  }
   render() {
-    const Tab = createAppContainer(this._tabNavigator());
-    return <Tab />
+    // 内层的navigator往外层的navigator跳转的时候无法跳转，
+    // 这个时候可以在内层保存外层的navigation
+    NavigationUtil.navigation = this.props.navigation; // 给导航管理类添加静态属性
+    return <DynamicTabNavigator />
   }
 }
 
