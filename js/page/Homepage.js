@@ -6,22 +6,9 @@
  * @flow
  * @lint-ignore-every XPLATJSCOPYRIGHT1
  */
-
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {
-  createBottomTabNavigator,
-  createAppContainer
-} from 'react-navigation';
 import NavigationUtil from '../navigator/NavigationUtil';
 import DynamicTabNavigator from '../navigator/DynamicTabNavigator';
-import PopularPage from './PopularPage';
-import TrendingPage from './TrendingPage';
-import FavoritePage from './FavoritePage';
-import Mypage from './Mypage';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Entypo from 'react-native-vector-icons/Entypo';
 
 type Props = {};
 export default class Home extends Component<Props> {
@@ -32,17 +19,3 @@ export default class Home extends Component<Props> {
     return <DynamicTabNavigator />
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  }
-});
