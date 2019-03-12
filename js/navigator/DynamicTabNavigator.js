@@ -80,7 +80,10 @@ const TABS = {
 }
 
 type Props = {};
-class DynamicTabNavigator extends Component<Props> {
+@connect(
+  state=>({theme: state.theme.theme})
+)
+export default class DynamicTabNavigator extends Component<Props> {
   constructor (props) {
     super(props);
     // console.disableYellowBox = true;禁止警告
@@ -107,13 +110,13 @@ class DynamicTabNavigator extends Component<Props> {
 }
 
 class TabBarComponent extends React.Component {
-  constructor (props) {
-    super(props);
-    this.theme = {
-      tintColor: props.activeTintColor,
-      updateTime: new Date().getTime()
-    }
-  }
+  // constructor (props) {
+  //   super(props);
+  //   this.theme = {
+  //     tintColor: props.activeTintColor,
+  //     updateTime: new Date().getTime()
+  //   }
+  // }
   render () {
     return <BottomTabBar 
       {...this.props}
@@ -122,8 +125,8 @@ class TabBarComponent extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  theme: state.theme.theme
-})
+// const mapStateToProps = state => ({
+//   theme: state.theme.theme
+// })
 
-export default connect(mapStateToProps)(DynamicTabNavigator);
+// export default connect(mapStateToProps)(DynamicTabNavigator);

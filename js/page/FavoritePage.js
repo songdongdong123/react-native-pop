@@ -14,7 +14,11 @@ import {connect} from 'react-redux';
 import actions from '../redux/action';
 
 type Props = {};
-class Favorite extends Component<Props> {
+@connect(
+  state=>({}),
+  {onThemeChange: actions.onThemeChange}
+)
+export default class Favorite extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
@@ -22,7 +26,7 @@ class Favorite extends Component<Props> {
         <Button 
           title="改变主题颜色"
           onPress={() => {
-            this.props.onThemeChange('pink');
+            this.props.onThemeChange('#000');
           }}
         />
       </View>
@@ -44,9 +48,9 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => ({});
-const mapDispatchToProps = dispatch => ({
-  onThemeChange: theme => dispatch(actions.onThemeChange(theme))
-});
+// const mapStateToProps = state => ({});
+// const mapDispatchToProps = dispatch => ({
+//   onThemeChange: theme => dispatch(actions.onThemeChange(theme))
+// });
 
-export default connect(mapStateToProps,mapDispatchToProps)(Favorite);
+// export default connect(mapStateToProps,mapDispatchToProps)(Favorite);

@@ -14,7 +14,11 @@ import actions from '../redux/action';
 
 
 type Props = {};
-class Trending extends Component<Props> {
+@connect(
+  state=>state,
+  {onThemeChange: actions.onThemeChange}
+)
+export default class Trending extends Component<Props> {
   render() {
     const {navigation} = this.props;
     return (
@@ -45,9 +49,10 @@ const styles = StyleSheet.create({
   }
 });
 
-const mapStateToProps = state => ({});
-const mapDispatchToProps = dispatch => ({
-  onThemeChange: theme => dispatch(actions.onThemeChange(theme))
-});
+// const mapStateToProps = state => ({});
+// // mapStatetoProps这个函数的作用就是将外部state对象到ui组件的props的映射关系
+// const mapDispatchToProps = dispatch => ({
+//   onThemeChange: theme => dispatch(actions.onThemeChange(theme))
+// });
 
-export default connect(mapStateToProps,mapDispatchToProps)(Trending);
+// export default connect(mapStateToProps,mapDispatchToProps)(Trending);
