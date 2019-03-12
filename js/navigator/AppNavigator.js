@@ -15,6 +15,9 @@ import WelcomePage from '../page/WelcomePage';
 import HomePage from '../page/Homepage';
 import DetailPage from '../page/DetailPage';
 
+import AxiosDemoPage from '../page/AxiosDemo'; // 网络请求测试页面
+import AsyncStorageDemo from '../page/AsyncStorageDemo'; //AsyncStorage测试页面
+
 export const rootCom = 'Init'; //设置跟路由
 
 
@@ -41,7 +44,19 @@ const MainNavigator = createStackNavigator({
     navigationOptions: {
       // header: null
     }
-  }
+  },
+  AxiosDemoPage: {
+    screen: AxiosDemoPage,
+    navigationOptions: {
+      // header: null
+    }
+  },
+  AsyncStorageDemo: {
+    screen: AsyncStorageDemo,
+    navigationOptions: {
+      // header: null
+    }
+  },
 })
 
 // SwitchNavigator 的用途是一次只显示一个页面。 
