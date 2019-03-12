@@ -1,21 +1,24 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- * @lint-ignore-every XPLATJSCOPYRIGHT1
- */
-
 import React, {Component} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, Button} from 'react-native';
+import {connect} from 'react-redux';
+import actions from '../redux/action';
 
 type Props = {};
+@connect(
+  state=>({}),
+  {onThemeChange: actions.onThemeChange}
+)
 export default class My extends Component<Props> {
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>My</Text>
+        <Button 
+          title="修改主题颜色"
+          onPress={() => {
+            this.props.onThemeChange('#36c');
+          }}
+        />
       </View>
     );
   }

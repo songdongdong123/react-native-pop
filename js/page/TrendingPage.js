@@ -1,12 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- * @lint-ignore-every XPLATJSCOPYRIGHT1
- */
-
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Button} from 'react-native';
 import {connect} from 'react-redux';
@@ -48,11 +39,3 @@ const styles = StyleSheet.create({
     margin: 10,
   }
 });
-
-// const mapStateToProps = state => ({});
-// // mapStatetoProps这个函数的作用就是将外部state对象到ui组件的props的映射关系
-// const mapDispatchToProps = dispatch => ({
-//   onThemeChange: theme => dispatch(actions.onThemeChange(theme))
-// });
-
-// export default connect(mapStateToProps,mapDispatchToProps)(Trending);

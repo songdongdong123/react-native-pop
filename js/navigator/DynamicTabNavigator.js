@@ -101,9 +101,6 @@ export default class DynamicTabNavigator extends Component<Props> {
     }));
   }
   render() {
-    // 内层的navigator往外层的navigator跳转的时候无法跳转，
-    // 这个时候可以在内层保存外层的navigation
-    NavigationUtil.navigation = this.props.navigation; // 给导航管理类添加静态属性
     const Tab = this._tabNavigator();
     return <Tab/>
   }
