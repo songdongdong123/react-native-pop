@@ -8,12 +8,14 @@
  */
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View } from 'react-native';
+import {StyleSheet, Text, View, Button } from 'react-native';
 import { 
   createMaterialTopTabNavigator, 
   createAppContainer
 } from 'react-navigation';
 import NavigationUtil from '../navigator/NavigationUtil';
+
+import { getAccountList } from '../axios/api/account';
 
 // 顶部导航tab标签配置
 const TAB_NAMES = ['Java', 'Android', 'Ios', 'React', 'React-Native', 'PHP']; 
@@ -60,6 +62,18 @@ export default class Popuilar extends Component<Props> {
 
 // Tab对应的页面
 class PopuilarTab extends Component<Props> {
+  state = {
+    dateText: ''
+  }
+  loadData () {
+    getAccountList({
+      pagecount: 0
+    }).then(res => {
+      this.setState({
+        dateText: JSON.stringify(res.data.data)
+      })
+    })
+  }
   render() {
     const {TabLabel} =  this.props;
     return (
@@ -68,6 +82,15 @@ class PopuilarTab extends Component<Props> {
         <Text onPress={() => {
           NavigationUtil.GoPage(this.props, 'DetailPage');
         }}>跳转到详情页面</Text>
+        <Button 
+          title="获取网络数据"
+          onPress={() => {
+            this.loadData();
+          }}
+        />
+        <View style={styles.dataText}>
+          <Text>{this.state.dateText}</Text>
+        </View>
       </View>
     );
   }
@@ -88,5 +111,8 @@ const styles = StyleSheet.create({
   labelStyle: {
     color: '#fff',
     fontSize: 13
+  },
+  dataText: {
+    flex: 1
   }
 });
