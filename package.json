@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "test": "jest",
+    "debug": "redux-devtools"
   },
   "dependencies": {
     "react": "16.6.3",
@@ -15,7 +16,6 @@
     "react-navigation-redux-helpers": "^3.0.0",
     "react-redux": "^6.0.1",
     "redux": "^4.0.1",
-    "redux-devtools": "^3.5.0",
     "redux-thunk": "^2.3.0"
   },
   "devDependencies": {
