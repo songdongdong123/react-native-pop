@@ -62,35 +62,26 @@ export default class Popuilar extends Component<Props> {
 
 // Tab对应的页面
 class PopuilarTab extends Component<Props> {
-  state = {
-    dateText: ''
-  }
-  loadData () {
-    getAccountList({
-      pagecount: 0
-    }).then(res => {
-      this.setState({
-        dateText: JSON.stringify(res.data.data)
-      })
-    })
-  }
   render() {
     const {TabLabel} =  this.props;
     return (
       <View style={styles.container}>
         <Text>{TabLabel}</Text>
-        <Text onPress={() => {
-          NavigationUtil.GoPage(this.props, 'DetailPage');
-        }}>跳转到详情页面</Text>
         <Button 
-          title="获取网络数据"
+          title="跳转到详情页面"
           onPress={() => {
-            this.loadData();
-          }}
-        />
-        <View style={styles.dataText}>
-          <Text>{this.state.dateText}</Text>
-        </View>
+            NavigationUtil.GoPage(this.props, 'DetailPage');
+        }}></Button>
+        <Button
+          title="跳转到网络请求测试页面" 
+          onPress={() => {
+            NavigationUtil.GoPage(this.props, 'AxiosDemoPage');
+        }}></Button>
+        <Button
+          title="跳转到AsyncStorageDemo测试页面" 
+          onPress={() => {
+            NavigationUtil.GoPage(this.props, 'AsyncStorageDemo');
+        }}></Button>
       </View>
     );
   }
