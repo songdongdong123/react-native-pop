@@ -17,6 +17,7 @@ import DetailPage from '../page/DetailPage';
 
 import AxiosDemoPage from '../page/AxiosDemo'; // 网络请求测试页面
 import AsyncStorageDemo from '../page/AsyncStorageDemo'; //AsyncStorage测试页面
+import DataStorePage from '../page/DataStorePage';
 
 export const rootCom = 'Init'; //设置跟路由
 
@@ -53,6 +54,12 @@ const MainNavigator = createStackNavigator({
   },
   AsyncStorageDemo: {
     screen: AsyncStorageDemo,
+    navigationOptions: {
+      // header: null
+    }
+  },
+  DataStorePage: {
+    screen: DataStorePage,
     navigationOptions: {
       // header: null
     }
