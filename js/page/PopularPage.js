@@ -82,6 +82,11 @@ class PopuilarTab extends Component<Props> {
           onPress={() => {
             NavigationUtil.GoPage(this.props, 'AsyncStorageDemo');
         }}></Button>
+        <Button
+          title="跳转到离线缓存测试页面" 
+          onPress={() => {
+            NavigationUtil.GoPage(this.props, 'DataStorePage');
+        }}></Button>
       </View>
     );
   }
