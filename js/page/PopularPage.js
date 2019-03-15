@@ -8,7 +8,9 @@
  */
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Button } from 'react-native';
+import {StyleSheet, Text, View, Button, FlatList, RefreshControl } from 'react-native';
+import {connect} from 'react-redux';
+import actions from '../redux/action';
 import { 
   createMaterialTopTabNavigator, 
   createAppContainer
@@ -18,18 +20,25 @@ import NavigationUtil from '../navigator/NavigationUtil';
 import { getAccountList } from '../axios/api/account';
 
 // 顶部导航tab标签配置
-const TAB_NAMES = ['Java', 'Android', 'Ios', 'React', 'React-Native', 'PHP']; 
+const TAB_NAMES = ['Java', 'Android', 'Ios', 'React', 'React-Native', 'PHP'];
+const URL = 'https://api.github.com/search/repositories?q=';
+const QUERY_STR = '&sort=stars'; 
+const THEME_COLOR='red';
 type Props = {};
+
 export default class Popuilar extends Component<Props> {
   constructor (props) {
     super(props);
+  }
+  componentDidMount() {
+    // console.log(this.props)
   }
   _genTabs () {
     const tabs = {};
     TAB_NAMES.forEach((item, index) => {
       tabs[`tab${index}`] = {
         // 这里使用的箭头函数，所以直接使用props，而不是使用this.props
-        screen: props => <PopuilarTab {...props} TabLabel={item}/>,
+        screen: props => <PopuilarTab {...props} tabLabel={item}/>,
         // screen: function () { //如果是普通函数，则使用this.props
         //   return <PopuilarTab {...this.props} TabLabel={item}/>
         // },
@@ -61,32 +70,61 @@ export default class Popuilar extends Component<Props> {
 }
 
 // Tab对应的页面
+@connect(
+  state=>state,
+  {onLoadPopularData: actions.onLoadPopularData}
+)
 class PopuilarTab extends Component<Props> {
+  constructor (props) {
+    super(props);
+    const {tabLabel} = this.props;
+    this.storeName =  tabLabel;
+  }
+  componentDidMount() {
+    this.loadData();
+  }
+  loadData () {
+    // 加载数据
+    const {onLoadPopularData} = this.props;
+    const url = this.genFetchUrl(this.storeName);
+    this.props.onLoadPopularData(this.storeName, url);
+  }
+  genFetchUrl (key) {
+    // 生成api接口地址
+    return URL + key + QUERY_STR;
+  }
+  renderItem (data) {
+    const item = data.item;
+    return <View style={{marginBottom: 10}}>
+      <Text style={{backgroundColor:'#f33'}}>{JSON.stringify(item)}</Text>
+    </View>
+  }
   render() {
-    const {TabLabel} =  this.props;
+    const {popular} =  this.props;
+    let store = popular[this.storeName]; // 动态获取state
+    if (!store) {
+      store = {
+        items: [],
+        isLoading: false
+      }
+    }
     return (
       <View style={styles.container}>
-        <Text>{TabLabel}</Text>
-        <Button 
-          title="跳转到详情页面"
-          onPress={() => {
-            NavigationUtil.GoPage(this.props, 'DetailPage');
-        }}></Button>
-        <Button
-          title="跳转到网络请求测试页面" 
-          onPress={() => {
-            NavigationUtil.GoPage(this.props, 'AxiosDemoPage');
-        }}></Button>
-        <Button
-          title="跳转到AsyncStorageDemo测试页面" 
-          onPress={() => {
-            NavigationUtil.GoPage(this.props, 'AsyncStorageDemo');
-        }}></Button>
-        <Button
-          title="跳转到离线缓存测试页面" 
-          onPress={() => {
-            NavigationUtil.GoPage(this.props, 'DataStorePage');
-        }}></Button>
+        <FlatList 
+          data={store.items}
+          renderItem={data => this.renderItem(data)}
+          keyExtractor={item=>''+item.id}
+          refreshControl={
+            <RefreshControl 
+              title={'Loading'}
+              titleColor={THEME_COLOR}
+              colors={[THEME_COLOR]}
+              refreshing={store.isLoading}
+              onRefresh={() => this.loadData()}
+              tintColor={THEME_COLOR}
+            />
+          }
+        />
       </View>
     );
   }

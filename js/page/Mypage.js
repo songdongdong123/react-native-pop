@@ -19,6 +19,26 @@ export default class My extends Component<Props> {
             this.props.onThemeChange('#36c');
           }}
         />
+        <Button 
+          title="跳转到详情页面"
+          onPress={() => {
+            NavigationUtil.GoPage(this.props, 'DetailPage');
+        }}></Button>
+        <Button
+          title="跳转到网络请求测试页面" 
+          onPress={() => {
+            NavigationUtil.GoPage(this.props, 'AxiosDemoPage');
+        }}></Button>
+        <Button
+          title="跳转到AsyncStorageDemo测试页面" 
+          onPress={() => {
+            NavigationUtil.GoPage(this.props, 'AsyncStorageDemo');
+        }}></Button>
+        <Button
+          title="跳转到离线缓存测试页面" 
+          onPress={() => {
+            NavigationUtil.GoPage(this.props, 'DataStorePage');
+        }}></Button>
       </View>
     );
   }
