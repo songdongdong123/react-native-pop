@@ -10,6 +10,7 @@ import DataStore from '../../../expand/dao/dataStore';
  */
 export function onLoadPopularData(storeName, url) {
   return dispatch => {
+    // 派发刷新状态
     dispatch({type:Types.POPULAR_REFRESH, storeName: storeName});
     let dataStore = new DataStore();
     dataStore.fetchData(url) // 异步action与数据流

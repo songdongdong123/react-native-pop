@@ -16,6 +16,7 @@ import {
   createAppContainer
 } from 'react-navigation';
 import NavigationUtil from '../navigator/NavigationUtil';
+import PopularItem from '../common/PopularItem';
 
 import { getAccountList } from '../axios/api/account';
 
@@ -95,9 +96,12 @@ class PopuilarTab extends Component<Props> {
   }
   renderItem (data) {
     const item = data.item;
-    return <View style={{marginBottom: 10}}>
-      <Text style={{backgroundColor:'#f33'}}>{JSON.stringify(item)}</Text>
-    </View>
+    return <PopularItem 
+      item={item}
+      onSelect={() => {
+        
+      }}
+    />
   }
   render() {
     const {popular} =  this.props;

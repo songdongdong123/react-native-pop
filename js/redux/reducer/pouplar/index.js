@@ -25,20 +25,20 @@ export default function onAction (state=defaultState, action) {
     // 数据加载成功
     case Types.LOAD_POPULAR_SUCCESS:
       return {...state, [action.storeName]: {
-        ...[action.storeName],
+        ...state[action.storeName],
         items: action.items,
         isLoading: false
       }};
     // 刷新
     case Types.POPULAR_REFRESH:
       return {...state, [action.storeName]: {
-        ...[action.storeName],
+        ...state[action.storeName],
         isLoading: true
       }};
     // 加载失败
     case Types.LOAD_POPULAR_FAIL:
       return {...state, [action.storeName]: {
-        ...[action.storeName],
+        ...state[action.storeName],
         isLoading: false
       }};
     default:
