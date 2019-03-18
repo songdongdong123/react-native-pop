@@ -22,24 +22,44 @@ const defaultState = {}
  */
 export default function onAction (state=defaultState, action) {
   switch (action.type) {
-    // 数据加载成功
-    case Types.LOAD_POPULAR_SUCCESS:
+    // 下拉刷新成功
+    case Types.POPULAR_REFRESH_SUCCESS:
+      console.log(...state[action.storeName])
       return {...state, [action.storeName]: {
         ...state[action.storeName],
-        items: action.items,
-        isLoading: false
+        items: action.items, // 原始数据
+        projectModes: action.projectModes, // 当前展示的数据
+        isLoading: false,
+        hideLoadingMore: false,
+        pageIndex: action.pageIndex
       }};
-    // 刷新
+    // 下拉刷新
     case Types.POPULAR_REFRESH:
       return {...state, [action.storeName]: {
         ...state[action.storeName],
-        isLoading: true
+        isLoading: true,
+        hideLoadingMore: true,
       }};
-    // 加载失败
-    case Types.LOAD_POPULAR_FAIL:
+    // 下拉刷新失败
+    case Types.POPULAR_REFRESH_FAIL:
       return {...state, [action.storeName]: {
         ...state[action.storeName],
         isLoading: false
+      }};
+    // 上拉加载更多成功
+    case Types.POPULAR_LOAD_MORE_SUCCESS:
+      return {...state, [action.storeName]: {
+        ...state[action.storeName],
+        projectModes: action.projectModes,
+        hideLoadingMore: false,
+        pageIndex: action.pageIndex
+      }};
+    // 上拉加载更多失败
+    case Types.POPULAR_LOAD_MORE_FAIL:
+      return {...state, [action.storeName]: {
+        ...state[action.storeName],
+        hideLoadingMore: true,
+        pageIndex: action.pageIndex
       }};
     default:
       return state;
