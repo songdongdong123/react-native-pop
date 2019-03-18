@@ -8,7 +8,8 @@
  */
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Button, FlatList, RefreshControl } from 'react-native';
+import {StyleSheet, ActivityIndicator, View, Text, FlatList, RefreshControl } from 'react-native';
+import Toast from 'react-native-easy-toast';
 import {connect} from 'react-redux';
 import actions from '../redux/action';
 import { 
@@ -16,6 +17,7 @@ import {
   createAppContainer
 } from 'react-navigation';
 import NavigationUtil from '../navigator/NavigationUtil';
+import PopularItem from '../common/PopularItem';
 
 import { getAccountList } from '../axios/api/account';
 
@@ -24,6 +26,7 @@ const TAB_NAMES = ['Java', 'Android', 'Ios', 'React', 'React-Native', 'PHP'];
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars'; 
 const THEME_COLOR='red';
+const PAEG_SIZE = 10;
 type Props = {};
 
 export default class Popuilar extends Component<Props> {
@@ -72,7 +75,10 @@ export default class Popuilar extends Component<Props> {
 // Tab对应的页面
 @connect(
   state=>state,
-  {onLoadPopularData: actions.onLoadPopularData}
+  {
+    onLoadPopularData: actions.onLoadPopularData,
+    onLoadMorePopular: actions.onLoadMorePopular
+  }
 )
 class PopuilarTab extends Component<Props> {
   constructor (props) {
@@ -83,35 +89,62 @@ class PopuilarTab extends Component<Props> {
   componentDidMount() {
     this.loadData();
   }
-  loadData () {
+  loadData (loadMore) {
     // 加载数据
-    const {onLoadPopularData} = this.props;
+    const {onLoadPopularData, onLoadMorePopular} = this.props;
+    const store = this._store();
     const url = this.genFetchUrl(this.storeName);
-    this.props.onLoadPopularData(this.storeName, url);
+    if (loadMore) {
+      onLoadMorePopular(this.storeName,++store.pageIndex, PAEG_SIZE, store.items, callback => {
+        this.refs.toast.show('没有更多了');
+      })
+    } else {
+      onLoadPopularData(this.storeName, url, PAEG_SIZE);
+    }
   }
   genFetchUrl (key) {
     // 生成api接口地址
     return URL + key + QUERY_STR;
   }
-  renderItem (data) {
-    const item = data.item;
-    return <View style={{marginBottom: 10}}>
-      <Text style={{backgroundColor:'#f33'}}>{JSON.stringify(item)}</Text>
-    </View>
-  }
-  render() {
-    const {popular} =  this.props;
-    let store = popular[this.storeName]; // 动态获取state
+  _store () {
+    /* 获取与当前页面有关的数据 */
+    const {popular} = this.props;
+    let store = popular[this.storeName];
     if (!store) {
       store = {
         items: [],
-        isLoading: false
+        isLoading: false,
+        projectModes: [], //要显示的数据
+        hideLoadingMore: true // 默认隐藏加载更多
       }
     }
+    console.log(store)
+    return store;
+  }
+  renderItem (data) {
+    const item = data.item;
+    return <PopularItem 
+      item={item}
+      onSelect={() => {
+
+      }}
+    />
+  }
+  genIndicator () {
+    return this._store().hideLoadingMore?null:
+      <View style={styles.indicatorContainer}>
+        <ActivityIndicator
+          style={styles.indicator}
+        />
+        <Text>正在加载更多......</Text>
+      </View>
+  }
+  render() {
+    let store = this._store(); // 动态获取state
     return (
       <View style={styles.container}>
         <FlatList 
-          data={store.items}
+          data={store.projectModes}
           renderItem={data => this.renderItem(data)}
           keyExtractor={item=>''+item.id}
           refreshControl={
@@ -124,6 +157,27 @@ class PopuilarTab extends Component<Props> {
               tintColor={THEME_COLOR}
             />
           }
+          ListFooterComponent={() => this.genIndicator()}
+          onEndReached={() => {
+            // 当列表被滚动到距离内容最底部不足onEndReachedThreshold的距离时调用。
+            setTimeout(() => {
+              // 这里使用延迟执行是为了确保this.loadData(true);一定是在onMomentumScrollBegin之后进行
+              if (this.canLoadMore) {
+                console.log('-----onEndReached------')
+                this.loadData(true);
+                this.canLoadMore = false;
+              }  
+            }, 100);
+          }}
+          onMomentumScrollBegin={() => {
+            // 滚动动画开始时调用此函数。
+            console.log('-----onMomentumScrollBegin------')
+            this.canLoadMore = true; // 解决初始化调用onEndReached的问题
+          }}
+          onEndReachedThreshold={0.5} //决定当距离内容最底部还有多远时触发onEndReached回调。注意此参数是一个比值而非像素单位。比如，0.5 表示距离内容最底部的距离为当前列表可见长度的一半时触发。
+        />
+        <Toast ref={'toast'} 
+          position={'center'}
         />
       </View>
     );
@@ -148,5 +202,12 @@ const styles = StyleSheet.create({
   },
   dataText: {
     flex: 1
+  },
+  indicatorContainer: {
+    alignItems: 'center',
+  },
+  indicator: {
+    color: '#f33',
+    margin: 10
   }
 });
