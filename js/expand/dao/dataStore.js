@@ -1,5 +1,6 @@
 import {AsyncStorage} from 'react-native';
 // import * as axios from '../../axios/config';
+export const FLAG_STORAGE = {flag_popular: 'popular', flag_trending: 'trending'};
 
 export default class DataStore {
 

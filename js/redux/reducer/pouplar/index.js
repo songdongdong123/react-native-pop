@@ -24,7 +24,6 @@ export default function onAction (state=defaultState, action) {
   switch (action.type) {
     // 下拉刷新成功
     case Types.POPULAR_REFRESH_SUCCESS:
-      console.log(...state[action.storeName])
       return {...state, [action.storeName]: {
         ...state[action.storeName],
         items: action.items, // 原始数据
