@@ -1,44 +1,65 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Button} from 'react-native';
+import {StyleSheet, View, Button, Text, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import actions from '../redux/action';
+import Feather from 'react-native-vector-icons/Feather';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+// 自定义顶部导航组件
+import NavigationBar from '../common/NavigationBar';
 
+
+const THEME_COLOR = '#f33'
 type Props = {};
 @connect(
   state=>({}),
   {onThemeChange: actions.onThemeChange}
 )
 export default class My extends Component<Props> {
+  getRightButton () {
+    return (
+      <View  style={{flexDirection: 'row',}}>
+        <TouchableOpacity
+          onPress={() => {}}
+        >
+          <View style={{padding: 5, marginRight: 8}}>
+            <Feather
+              name={'search'}
+              size={24}
+              style={{color:'white'}}/>
+          </View>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+  getLeftButton (callback) {
+    return (
+      <TouchableOpacity
+        style={{padding: 8, paddingLeft: 12,}}
+        onpress={callback}
+      >
+        <Ionicons
+          name="ios-arrow-back"
+          size={24}
+          style={{color: 'white'}}/>
+      </TouchableOpacity>
+    )
+  }
   render() {
+    let statusBar = {
+      backgroundColor: THEME_COLOR,
+      barStyle: 'light-content'
+    };
+    let navigationBar = <NavigationBar
+      title={'我的'}
+      statusBar={statusBar}
+      style={{backgroundColor:THEME_COLOR}}
+      rightButton={this.getRightButton()}
+      leftButton={this.getLeftButton()}
+    />
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>My</Text>
-        <Button 
-          title="修改主题颜色"
-          onPress={() => {
-            this.props.onThemeChange('#36c');
-          }}
-        />
-        <Button 
-          title="跳转到详情页面"
-          onPress={() => {
-            NavigationUtil.GoPage(this.props, 'DetailPage');
-        }}></Button>
-        <Button
-          title="跳转到网络请求测试页面" 
-          onPress={() => {
-            NavigationUtil.GoPage(this.props, 'AxiosDemoPage');
-        }}></Button>
-        <Button
-          title="跳转到AsyncStorageDemo测试页面" 
-          onPress={() => {
-            NavigationUtil.GoPage(this.props, 'AsyncStorageDemo');
-        }}></Button>
-        <Button
-          title="跳转到离线缓存测试页面" 
-          onPress={() => {
-            NavigationUtil.GoPage(this.props, 'DataStorePage');
-        }}></Button>
+        {navigationBar}
+        <Text>MyPage</Text>
       </View>
     );
   }
@@ -47,13 +68,5 @@ export default class My extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
   }
 });

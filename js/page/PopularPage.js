@@ -18,6 +18,8 @@ import {
 } from 'react-navigation';
 import NavigationUtil from '../navigator/NavigationUtil';
 import PopularItem from '../common/PopularItem';
+// 自定义顶部导航组件
+import NavigationBar from '../common/NavigationBar';
 
 import { getAccountList } from '../axios/api/account';
 
@@ -25,7 +27,7 @@ import { getAccountList } from '../axios/api/account';
 const TAB_NAMES = ['Java', 'Android', 'Ios', 'React', 'React-Native', 'PHP'];
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars'; 
-const THEME_COLOR='red';
+const THEME_COLOR='#f33';
 const PAEG_SIZE = 10;
 type Props = {};
 
@@ -53,22 +55,39 @@ export default class Popuilar extends Component<Props> {
     return tabs;
   }
   render() {
+    // 状态栏设置
+    let statusBar = {
+      backgroundColor: THEME_COLOR,
+      barStyle: 'light-content'
+    };
+    // 顶部导航栏设置
+    let navigationBar = <NavigationBar
+      title={'最热'}
+      statusBar={statusBar}
+      style={{backgroundColor: THEME_COLOR}}
+    />
+
     const TabNavigator =  createAppContainer(createMaterialTopTabNavigator(
       this._genTabs(), {
         // tabBar配置选项
         tabBarOptions: {
+          inactiveTintColor: '#333',
+          activeTintColor: '#f33',
           tabStyle: styles.tabStyle, //选项卡的样式对象
           upperCaseLabel: false, //是否使标签大写，默认为 true。
           scrollEnabled: true, // 是否支持 选项卡滚动 默认为 false
           style: { // 选项卡栏的样式对象(选项卡背景颜色等)
-            backgroundColor: '#f33'
+            backgroundColor: '#fff'
           },
           indicatorStyle: styles.indicatorStyle, //选项卡指示器的样式对象（选项卡底部的行）
           labelStyle: styles.labelStyle, // 选项卡标签的样式对象(选项卡文字样式,颜色字体大小等)
         }
       }
     ));
-    return <TabNavigator />
+    return <View style={{flex:1}}>
+      {navigationBar}
+      <TabNavigator />
+    </View>
   }
 }
 
@@ -194,10 +213,9 @@ const styles = StyleSheet.create({
   },
   indicatorStyle: {
     height: 2,
-    backgroundColor: '#fff'
+    backgroundColor: '#f33'
   },
   labelStyle: {
-    color: '#fff',
     fontSize: 13
   },
   dataText: {
