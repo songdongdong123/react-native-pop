@@ -1,5 +1,5 @@
 import Types from '../action_types';
-import DataStore from '../../../expand/dao/dataStore';
+import DataStore, {FLAG_STORAGE} from '../../../expand/dao/dataStore';
 import handleData from '../ActionUtil';
 
 /**
@@ -9,6 +9,7 @@ import handleData from '../ActionUtil';
  * @param {*} storeName
  * @returns
  */
+//  FLAG_STORAGE
 export function onLoadTrendingData(storeName, url, pageSize) {
   return dispatch => {
     // 派发刷新状态

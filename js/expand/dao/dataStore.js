@@ -1,6 +1,6 @@
 import {AsyncStorage} from 'react-native';
 // import * as axios from '../../axios/config';
-import Trending from 'GitHubTrending';
+import GitHubTrending from 'GitHubTrending';
 export const FLAG_STORAGE = {flag_popular: 'popular', flag_trending: 'trending'};
 
 export default class DataStore {
@@ -126,7 +126,7 @@ export default class DataStore {
           reject(error);
         })
       } else {
-        new GitHubTrending().fetch(url)
+        new GitHubTrending().fetchTrending(url)
         .then(items => {
           if (!items) {
             throw new Error('responseData is null');
