@@ -6,7 +6,7 @@
  * @param {*} data
  * @param {*} pageSize
  */
-export function handleData (actionType, dispatch, storeName, data, pageSize) {
+export default function handleData (actionType, dispatch, storeName, data, pageSize) {
   let fixItems = [];
   if (data && data.data) {
     if (Array.isArray(data.data)) {

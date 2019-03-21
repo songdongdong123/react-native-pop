@@ -8,7 +8,7 @@
  */
 
 import React, {Component} from 'react';
-import {StyleSheet, ActivityIndicator, View, Text, FlatList, RefreshControl } from 'react-native';
+import {StyleSheet,DeviceInfo, ActivityIndicator, View, Text, FlatList, RefreshControl } from 'react-native';
 import Toast from 'react-native-easy-toast';
 import {connect} from 'react-redux';
 import actions from '../redux/action';
@@ -77,14 +77,15 @@ export default class Popuilar extends Component<Props> {
           upperCaseLabel: false, //是否使标签大写，默认为 true。
           scrollEnabled: true, // 是否支持 选项卡滚动 默认为 false
           style: { // 选项卡栏的样式对象(选项卡背景颜色等)
-            backgroundColor: '#fff'
+            backgroundColor: '#fff',
+            height: 35 // fix 开启scrollEnabled后在android上初次渲染的时候会有高度闪烁的问题，所以这里需要固定高度
           },
           indicatorStyle: styles.indicatorStyle, //选项卡指示器的样式对象（选项卡底部的行）
           labelStyle: styles.labelStyle, // 选项卡标签的样式对象(选项卡文字样式,颜色字体大小等)
         }
       }
     ));
-    return <View style={{flex:1}}>
+    return <View style={{flex:1, marginTop: DeviceInfo.isIphoneX_deprecated?30:0}}>
       {navigationBar}
       <TabNavigator />
     </View>
@@ -209,14 +210,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
   tabStyle: {
-    minWidth: 50
+    // 这里如果固定宽度，android首次渲染的时候，tab的宽度会有问题，这里有坑
+    // width: 100,
+    padding:0
   },
   indicatorStyle: {
     height: 2,
     backgroundColor: '#f33'
   },
   labelStyle: {
-    fontSize: 13
+    fontSize: 13,
+    // margin: 0,
   },
   dataText: {
     flex: 1

@@ -1,5 +1,5 @@
 import Types from '../action_types';
-import DataStore from '../../../expand/dao/dataStore';
+import DataStore, {FLAG_STORAGE} from '../../../expand/dao/dataStore';
 import handleData from '../ActionUtil';
 /**
  * 获取最热数据的异步action
