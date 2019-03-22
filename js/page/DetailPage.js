@@ -73,7 +73,6 @@ export default class Detail extends Component<Props> {
   }
   onNavigationStateChange (navState) {
     // webview路由变化时调用
-    console.log(navState)
     this.setState({
       canGoBack: navState.canGoBack,
       url: navState.url
