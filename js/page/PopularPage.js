@@ -58,7 +58,7 @@ export default class Popuilar extends Component<Props> {
     // 状态栏设置
     let statusBar = {
       backgroundColor: THEME_COLOR,
-      barStyle: 'light-content'
+      barStyle: 'light-content',
     };
     // 顶部导航栏设置
     let navigationBar = <NavigationBar
@@ -138,7 +138,7 @@ class PopuilarTab extends Component<Props> {
         hideLoadingMore: true // 默认隐藏加载更多
       }
     }
-    console.log(store)
+    // console.log(store)
     return store;
   }
   renderItem (data) {
@@ -146,7 +146,10 @@ class PopuilarTab extends Component<Props> {
     return <PopularItem 
       item={item}
       onSelect={() => {
-
+        // console.log(item)
+        NavigationUtil.goPage({
+          projectModel: item
+        }, 'DetailPage')
       }}
     />
   }

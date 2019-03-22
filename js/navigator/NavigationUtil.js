@@ -21,7 +21,7 @@ export default class NavigationUtil {
    * @static
    * @memberof NavigationUtil
    */
-  static GoBack ({navigation}) {
+  static goBack ({navigation}) {
     navigation.goBack();
   }
 
@@ -31,7 +31,7 @@ export default class NavigationUtil {
    * @page   要跳转的页面
    * @memberof NavigationUtil
    */
-  static GoPage (params, page) {
+  static goPage (params, page) {
     const navigation = NavigationUtil.navigation;
     if (!navigation) {
       console.log('NavigationUtil.navigation can not null !!!');

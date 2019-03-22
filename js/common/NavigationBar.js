@@ -28,7 +28,7 @@ export default class NavigationBar extends Component {
   static defaultProps = {
     statusBar: {
         barStyle: 'light-content', //多个页面设置，只有第一个页面有效
-        hidden: false
+        hidden: true
     }
   }
 

@@ -22,7 +22,11 @@ export default class TrendingItem extends Component {
     </TouchableOpacity>
     const description = `<p>${item.description}></p>`;
     return (
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          this.props.onSelect()
+        }}
+      >
         <View style={styles.container}>
           <Text style={styles.title}>
             {item.fullName}
