@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import NavigationUtil from '../navigator/NavigationUtil';
 import DynamicTabNavigator from '../navigator/DynamicTabNavigator';
+import BackPressComponent from '../common/BackPressComponent';
 
 // 处理安卓的物理返回键
 import {BackHandler} from 'react-native';
@@ -12,13 +13,17 @@ type Props = {};
   state=>state
 )
 export default class Home extends Component<Props> {
+  constructor (props) {
+    super(props);
+    this.backPress = new BackPressComponent({backPress: this.onBackPress()});
+  }
   componentDidMount () {
     // 注册物理返回键的监听
-    BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
+    this.backPress.componentDidMount();
   }
   componentWillUnmount() {
     // 注销物理返回键的监听
-    BackHandler.removeEventListener('hardwareBackPress', this.onBackPress);
+    this.backPress.componentWillUnmount();
   }
   onBackPress = () => {
     /** 

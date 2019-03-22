@@ -20,7 +20,9 @@ export default class PopulatItem extends Component {
       />
     </TouchableOpacity>
     return (
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {this.props.onSelect()}}
+      >
         <View style={styles.container}>
           <Text style={styles.title}>
             {item.full_name}
