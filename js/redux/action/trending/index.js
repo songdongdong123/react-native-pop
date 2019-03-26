@@ -1,6 +1,6 @@
 import Types from '../action_types';
 import DataStore, {FLAG_STORAGE} from '../../../expand/dao/dataStore';
-import handleData from '../ActionUtil';
+import handleData, {_projectModels} from '../ActionUtil';
 
 /**
  * 获取最热数据的异步action
@@ -10,14 +10,14 @@ import handleData from '../ActionUtil';
  * @returns
  */
 //  FLAG_STORAGE
-export function onLoadTrendingData(storeName, url, pageSize) {
+export function onLoadTrendingData(storeName, url, pageSize, favoriteDao) {
   return dispatch => {
     // 派发刷新状态
     dispatch({type:Types.TRENDING_REFRESH, storeName: storeName});
     let dataStore = new DataStore();
     dataStore.fetchData(url, FLAG_STORAGE.flag_trending) // 异步action与数据流
              .then(data => {
-                handleData(Types.TRENDING_REFRESH_SUCCESS, dispatch, storeName, data, pageSize);
+                handleData(Types.TRENDING_REFRESH_SUCCESS, dispatch, storeName, data, pageSize, favoriteDao);
              })
              .catch(error => {
                 console.log(error);
@@ -40,7 +40,7 @@ export function onLoadTrendingData(storeName, url, pageSize) {
  * @param {*} [dataArray=[]] 原始数据
  * @param {*} callback 回调函数，可以通过回调函数来向调用页面通信：比如异常信息的展示，没有更多等待
  */
-export function onLoadMoreTrending (storeName, pageIndex, pageSize, dataArray=[], callback) {
+export function onLoadMoreTrending (storeName, pageIndex, pageSize, dataArray=[], favoriteDao, callback) {
   return dispatch => { // 模拟网络请求
     setTimeout(() => {
       if ((pageIndex - 1) * pageSize >= dataArray.length) { // 已加载完全部数据
@@ -51,16 +51,17 @@ export function onLoadMoreTrending (storeName, pageIndex, pageSize, dataArray=[]
           type: Types.TRENDING_LOAD_MORE_FAIL,
           error: 'no more',
           storeName: storeName,
-          pageIndex: --pageIndex,
-          projectModes: dataArray
+          pageIndex: --pageIndex
         })
       } else {
         let max = pageSize * pageIndex > dataArray.length ? dataArray.length : pageIndex * pageSize;
-        dispatch({
-          type: Types.TRENDING_LOAD_MORE_SUCCESS,
-          storeName: storeName,
-          pageIndex: pageIndex,
-          projectModes: dataArray.slice(0, max)
+        _projectModels(dataArray.slice(0, max), favoriteDao, data => {
+          dispatch({
+            type: Types.TRENDING_LOAD_MORE_SUCCESS,
+            storeName: storeName,
+            pageIndex: pageIndex,
+            projectModels: data
+          })
         })
       }
     }, 500);

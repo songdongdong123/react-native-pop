@@ -3,6 +3,7 @@ import {StyleSheet,DeviceInfo, WebView, TouchableOpacity, Text, View} from 'reac
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import NavigationUtil from  '../navigator/NavigationUtil';
 import BackPressComponent from '../common/BackPressComponent';
+import FavoriteDao from '../expand/dao/FavoriteDao';
 // 自定义顶部导航组件
 import NavigationBar from '../common/NavigationBar';
 import ViewUtil from '../util/ViewUtil';
@@ -14,13 +15,15 @@ export default class Detail extends Component<Props> {
   constructor (props) {
     super(props);
     this.params = this.props.navigation.state.params;
-    const {projectModel} = this.params;
-    this.url = projectModel.html_url||TRENDING_URL+projectModel.fullName;
-    const title = projectModel.full_name||projectModel.fullName;
+    const {projectModel, flag} = this.params;
+    this.favoriteDao = new FavoriteDao(flag);
+    this.url = projectModel.item.html_url||TRENDING_URL+projectModel.item.fullName;
+    const title = projectModel.item.full_name||projectModel.item.fullName;
     this.state = {
       title: title,
       url: this.url,
-      canGoBack: false
+      canGoBack: false,
+      isFavorite: projectModel.isFavorite
     }
     this.backPress = new BackPressComponent({backPress: () => this.onBackPress()});
   }
@@ -50,15 +53,27 @@ export default class Detail extends Component<Props> {
       NavigationUtil.goBack({navigation:this.props.navigation});
     }
   }
+  onFavoriteButtonClick () {
+    const {projectModel, callback} = this.params;
+    const isFavorite = projectModel.isFavorite = !projectModel.isFavorite;
+    callback(isFavorite);//更新列表页的收藏状态
+    this.setState({
+      isFavorite: isFavorite
+    });
+    let key = projectModel.item.fullName ? projectModel.item.fullName : projectModel.item.id.toString();
+    if (projectModel.isFavorite) {
+      this.favoriteDao.saveFavoriteItem(key, JSON.stringify(projectModel.item));
+    } else {
+      this.favoriteDao.removeFavoriteKeys(key);
+    }
+  }
   renderRightButton () {
     return (
       <View style={{flexDirection: 'row',}}>
         <TouchableOpacity
-          onPress={() => {
-
-          }}>
+          onPress={() => this.onFavoriteButtonClick()}>
           <FontAwesome 
-            name={'star-o'}
+            name={this.state.isFavorite?'star':'star-o'}
             size={20}
             style={{color:'white', marginRight:10}}
           />
@@ -73,7 +88,6 @@ export default class Detail extends Component<Props> {
   }
   onNavigationStateChange (navState) {
     // webview路由变化时调用
-    console.log(navState)
     this.setState({
       canGoBack: navState.canGoBack,
       url: navState.url
