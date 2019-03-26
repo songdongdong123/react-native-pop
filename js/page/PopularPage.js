@@ -12,11 +12,14 @@ import {StyleSheet,DeviceInfo, ActivityIndicator, View, Text, FlatList, RefreshC
 import Toast from 'react-native-easy-toast';
 import {connect} from 'react-redux';
 import actions from '../redux/action';
+import FavoriteDao from '../expand/dao/FavoriteDao';
+import {FLAG_STORAGE} from '../expand/dao/dataStore';
 import { 
   createMaterialTopTabNavigator, 
   createAppContainer
 } from 'react-navigation';
 import NavigationUtil from '../navigator/NavigationUtil';
+import FavoriteUtil from '../util/FavoriteUtil';
 import PopularItem from '../common/PopularItem';
 // 自定义顶部导航组件
 import NavigationBar from '../common/NavigationBar';
@@ -29,6 +32,7 @@ const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars'; 
 const THEME_COLOR='#f33';
 const PAEG_SIZE = 10;
+const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 type Props = {};
 
 export default class Popuilar extends Component<Props> {
@@ -36,7 +40,6 @@ export default class Popuilar extends Component<Props> {
     super(props);
   }
   componentDidMount() {
-    // console.log(this.props)
   }
   _genTabs () {
     const tabs = {};
@@ -115,11 +118,11 @@ class PopuilarTab extends Component<Props> {
     const store = this._store();
     const url = this.genFetchUrl(this.storeName);
     if (loadMore) {
-      onLoadMorePopular(this.storeName,++store.pageIndex, PAEG_SIZE, store.items, callback => {
+      onLoadMorePopular(this.storeName,++store.pageIndex, PAEG_SIZE, store.items, favoriteDao, callback => {
         this.refs.toast.show('没有更多了');
       })
     } else {
-      onLoadPopularData(this.storeName, url, PAEG_SIZE);
+      onLoadPopularData(this.storeName, url, PAEG_SIZE, favoriteDao);
     }
   }
   genFetchUrl (key) {
@@ -134,23 +137,24 @@ class PopuilarTab extends Component<Props> {
       store = {
         items: [],
         isLoading: false,
-        projectModes: [], //要显示的数据
+        projectModels: [], //要显示的数据
         hideLoadingMore: true // 默认隐藏加载更多
       }
     }
-    // console.log(store)
     return store;
   }
   renderItem (data) {
     const item = data.item;
     return <PopularItem 
-      item={item}
-      onSelect={() => {
-        // console.log(item)
+      projectModel={item}
+      onSelect={(callback) => {
         NavigationUtil.goPage({
-          projectModel: item
+          projectModel: item,
+          flag: FLAG_STORAGE.flag_popular,
+          callback
         }, 'DetailPage')
       }}
+      onFavorite={(item, isFavorite) => FavoriteUtil.onFavorite(favoriteDao, item, isFavorite, FLAG_STORAGE.flag_popular)}
     />
   }
   genIndicator () {
@@ -167,9 +171,9 @@ class PopuilarTab extends Component<Props> {
     return (
       <View style={styles.container}>
         <FlatList 
-          data={store.projectModes}
+          data={store.projectModels}
           renderItem={data => this.renderItem(data)}
-          keyExtractor={item=>''+item.id}
+          keyExtractor={item=>''+item.item.id}
           refreshControl={
             <RefreshControl 
               title={'Loading'}

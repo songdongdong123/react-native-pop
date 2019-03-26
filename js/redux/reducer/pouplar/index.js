@@ -27,7 +27,7 @@ export default function onAction (state=defaultState, action) {
       return {...state, [action.storeName]: {
         ...state[action.storeName],
         items: action.items, // 原始数据
-        projectModes: action.projectModes, // 当前展示的数据
+        projectModels: action.projectModels, // 当前展示的数据
         isLoading: false,
         hideLoadingMore: false,
         pageIndex: action.pageIndex
@@ -49,7 +49,7 @@ export default function onAction (state=defaultState, action) {
     case Types.POPULAR_LOAD_MORE_SUCCESS:
       return {...state, [action.storeName]: {
         ...state[action.storeName],
-        projectModes: action.projectModes,
+        projectModels: action.projectModels,
         hideLoadingMore: false,
         pageIndex: action.pageIndex
       }};
