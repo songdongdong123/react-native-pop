@@ -21,7 +21,6 @@ const defaultState = {}
  * @returns
  */
 export default function onAction (state=defaultState, action) {
-  console.log(action)
   switch (action.type) {
     // 获取数据
     case Types.FAVORITE_LOAD_DATA:

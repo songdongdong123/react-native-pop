@@ -24,6 +24,8 @@ import PopularItem from '../common/PopularItem';
 import TrendingItem from '../common/TrendingItem';
 // 自定义顶部导航组件
 import NavigationBar from '../common/NavigationBar';
+import EventTypes from '../util/EventTypes';
+import EventBus from 'react-native-event-bus';
 
 
 // 顶部导航tab标签配置
@@ -102,12 +104,20 @@ class FavoriteTab extends Component<Props> {
     this.favoriteDao = new FavoriteDao(flag);
   }
   componentDidMount() {
-    this.loadData();
+    this.loadData(true);
+    EventBus.getInstance().addListener(EventTypes.bottom_tab_select, this.listener = data => {
+      if (data.to === 2) {
+        this.loadData(false);
+      }
+    });
+  }
+  componentWillMount() {
+    // 移除监听器
+    EventBus.getInstance().removeListener(this.listener);
   }
   loadData (isShowLoading) {
     // 加载数据
     const {onLoadFavoriteData} = this.props;
-    console.log(this.storeName)
     onLoadFavoriteData(this.storeName, isShowLoading);
   }
   _store () {
@@ -123,6 +133,14 @@ class FavoriteTab extends Component<Props> {
     }
     return store;
   }
+  onFavorite (item, isFavorite) {
+    FavoriteUtil.onFavorite(this.favoriteDao, item, isFavorite, this.storeName);
+    if (this.storeName === FLAG_STORAGE.flag_popular) {
+      EventBus.getInstance().fireEvent(EventTypes.favorite_changed_popular);
+    } else {
+      EventBus.getInstance().fireEvent(EventTypes.favorite_changed_trending);
+    }
+  }
   renderItem (data) {
     const item = data.item;
     const Item = this.storeName === FLAG_STORAGE.flag_popular ? PopularItem : TrendingItem;
@@ -135,7 +153,7 @@ class FavoriteTab extends Component<Props> {
           callback
         }, 'DetailPage')
       }}
-      onFavorite={(item, isFavorite) => FavoriteUtil.onFavorite(this.favoriteDao, item, isFavorite, this.storeName)}
+      onFavorite={(item, isFavorite) => this.onFavorite(item, isFavorite)}
     />
   }
   genIndicator () {
@@ -190,7 +208,6 @@ const styles = StyleSheet.create({
   },
   labelStyle: {
     fontSize: 13,
-    // margin: 0,
   },
   dataText: {
     flex: 1
