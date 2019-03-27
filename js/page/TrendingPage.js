@@ -37,7 +37,9 @@ import NavigationBar from '../common/NavigationBar';
 // 自定义弹窗
 import TrendingDialog, {TimeSpans} from '../common/TrendingDialog';
 
-import { getAccountList } from '../axios/api/account';
+//用于页面之间通讯
+import EventTypes from '../util/EventTypes';
+import EventBus from 'react-native-event-bus';
 
 // 顶部导航tab标签配置
 const TAB_NAMES = ['All', 'C', 'C#', 'PHP', 'Javascript'];
@@ -166,7 +168,8 @@ export default class Trending extends Component<Props> {
   state=>state,
   {
     onLoadTrendingData: actions.onLoadTrendingData,
-    onLoadMoreTrending: actions.onLoadMoreTrending
+    onLoadMoreTrending: actions.onLoadMoreTrending,
+    onFlushTrendingFavorite: actions.onFlushTrendingFavorite
   }
 )
 class TrendingTab extends Component<Props> {
@@ -175,6 +178,8 @@ class TrendingTab extends Component<Props> {
     const {tabLabel, timeSpan} = this.props;
     this.storeName =  tabLabel;
     this.timeSpan = timeSpan;
+    // 是否刷新页面的收藏状态
+    this.isFavoriteChanged = false;
   }
   componentDidMount() {
     this.loadData();
@@ -182,21 +187,37 @@ class TrendingTab extends Component<Props> {
       this.timeSpan = timeSpan;
       this.loadData();
     });
+
+    EventBus.getInstance().addListener(EventTypes.favorite_changed_trending, this.favoriteChangeListener = () => {
+      // 收藏页面状态变化的通知
+      this.isFavoriteChanged = true;
+    });
+    EventBus.getInstance().addListener(EventTypes.bottom_tab_select, this.botomTabSelectListener = (data) => {
+      // 底部tab切换的通知
+      if (data.to === 1 && this.isFavoriteChanged) {
+        this.loadData(null, true);
+      }
+    });
   }
   componentWillUnmount () {
     if (this.timeSpanChangeListener) {
       this.timeSpanChangeListener.remove();
     }
+    // 移除监听器
+    EventBus.getInstance().removeListener(this.favoriteChangeListener);
+    EventBus.getInstance().removeListener(this.botomTabSelectListener);
   }
-  loadData (loadMore) {
+  loadData (loadMore, refreshFavorite) {
     // 加载数据
-    const {onLoadTrendingData, onLoadMoreTrending} = this.props;
+    const {onLoadTrendingData, onLoadMoreTrending, onFlushTrendingFavorite} = this.props;
     const store = this._store();
     const url = this.genFetchUrl(this.storeName);
     if (loadMore) {
       onLoadMoreTrending(this.storeName,++store.pageIndex, PAEG_SIZE, store.items, favoriteDao, callback => {
         this.refs.toast.show('没有更多了');
       })
+    } else if (refreshFavorite) {
+      onFlushTrendingFavorite(this.storeName, store.pageIndex, PAEG_SIZE, store.items, favoriteDao)
     } else {
       onLoadTrendingData(this.storeName, url, PAEG_SIZE, favoriteDao);
     }

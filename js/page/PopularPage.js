@@ -24,7 +24,9 @@ import PopularItem from '../common/PopularItem';
 // 自定义顶部导航组件
 import NavigationBar from '../common/NavigationBar';
 
-import { getAccountList } from '../axios/api/account';
+//用于页面之间通讯
+import EventTypes from '../util/EventTypes';
+import EventBus from 'react-native-event-bus';
 
 // 顶部导航tab标签配置
 const TAB_NAMES = ['Java', 'Android', 'Ios', 'React', 'React-Native', 'PHP'];
@@ -100,7 +102,8 @@ export default class Popuilar extends Component<Props> {
   state=>state,
   {
     onLoadPopularData: actions.onLoadPopularData,
-    onLoadMorePopular: actions.onLoadMorePopular
+    onLoadMorePopular: actions.onLoadMorePopular,
+    onFlushPopularFavorite: actions.onFlushPopularFavorite
   }
 )
 class PopuilarTab extends Component<Props> {
@@ -108,19 +111,39 @@ class PopuilarTab extends Component<Props> {
     super(props);
     const {tabLabel} = this.props;
     this.storeName =  tabLabel;
+    this.isFavoriteChanged = false;
   }
   componentDidMount() {
     this.loadData();
+    EventBus.getInstance().addListener(EventTypes.favorite_changed_popular, this.favoriteChangeListener = () => {
+      // 收藏页面状态变化的通知
+      this.isFavoriteChanged = true;
+    });
+    EventBus.getInstance().addListener(EventTypes.bottom_tab_select, this.botomTabSelectListener = (data) => {
+      // 底部tab切换的通知
+      if (data.to === 0 && this.isFavoriteChanged) {
+        this.loadData(null, true);
+      }
+    });
   }
-  loadData (loadMore) {
+  componentWillMount() {
+    // 移除监听器
+    EventBus.getInstance().removeListener(this.favoriteChangeListener);
+    EventBus.getInstance().removeListener(this.botomTabSelectListener);
+  }
+  loadData (loadMore, refreshFavorite) {
+    // refreshFavorite 是否刷新收藏状态
     // 加载数据
-    const {onLoadPopularData, onLoadMorePopular} = this.props;
+    const {onLoadPopularData, onLoadMorePopular, onFlushPopularFavorite} = this.props;
     const store = this._store();
     const url = this.genFetchUrl(this.storeName);
     if (loadMore) {
       onLoadMorePopular(this.storeName,++store.pageIndex, PAEG_SIZE, store.items, favoriteDao, callback => {
         this.refs.toast.show('没有更多了');
       })
+    } else if (refreshFavorite) {
+      // 从favorite页面回跳至popular页面时，刷新popular页面的收藏状态
+      onFlushPopularFavorite(this.storeName,store.pageIndex, PAEG_SIZE, store.items, favoriteDao);
     } else {
       onLoadPopularData(this.storeName, url, PAEG_SIZE, favoriteDao);
     }

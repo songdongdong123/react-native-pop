@@ -60,6 +60,14 @@ export default function onAction (state=defaultState, action) {
         hideLoadingMore: true,
         pageIndex: action.pageIndex
       }};
+    case Types.FLUSH_POPULAR_FAVORITE:
+      return {
+        ...state, 
+        [action.storeName]: {
+          ...state[action.storeName],
+          projectModels: action.projectModels
+        }
+      };
     default:
       return state;
   }
