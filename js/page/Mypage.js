@@ -7,9 +7,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 // 自定义顶部导航组件
 import NavigationBar from '../common/NavigationBar';
 import { MORE_MENU } from  '../common/MORE_MENU';
-import GobalStyles from '../res/GobalStyles';
+import GobalStyles from '../res/styles/GobalStyles';
 import ViewUtil from '../util/ViewUtil';
-
+import NavigationUtil from '../navigator/NavigationUtil';
 
 const THEME_COLOR = '#f33'
 type Props = {};
@@ -19,7 +19,22 @@ type Props = {};
 )
 export default class My extends Component<Props> {
   onClick (menu) {
-
+    let RouteName, params = {};
+    switch (menu) {
+      case MORE_MENU.Tutorial:
+        RouteName = 'WebViewPage';
+        params.title = '教程';
+        params.url = 'https://ml.66jingcai.cn/'
+        break;
+      case MORE_MENU.About:
+        RouteName = 'AboutPage';
+        break;
+      default:
+        break;
+    }
+    if (RouteName) {
+      NavigationUtil.goPage(params, RouteName);
+    }
   }
   getItem (menu) {
     return ViewUtil.getMenuItem(() => this.onClick(menu), menu, THEME_COLOR);
