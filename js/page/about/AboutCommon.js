@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Image, Text, Dimensions, Platform,StatusBar, StyleSheet} from 'react-native';
+import {View, Image, Text, Dimensions, Platform, StyleSheet} from 'react-native';
 import BackPressComponent from '../../common/BackPressComponent';
 import NavigationUtil from  '../../navigator/NavigationUtil';
 import config from '../../res/data/github_app_config.json';
@@ -53,7 +53,6 @@ export default class AboutCommon {
   getParallaxRenderConfig (params) {
     let config = {};
     let avatar = typeof(params.avatar) === 'string' ? {uri: params.avatar} : params.avatar;
-    console.log(params)
     // debugger
     config.renderBackground=() => (
       // 背景设置

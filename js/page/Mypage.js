@@ -29,6 +29,9 @@ export default class My extends Component<Props> {
       case MORE_MENU.About:
         RouteName = 'AboutPage';
         break;
+      case MORE_MENU.About_Author:
+        RouteName = 'AboutMePage';
+        break;
       default:
         break;
     }
