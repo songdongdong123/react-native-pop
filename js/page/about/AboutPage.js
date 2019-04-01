@@ -17,7 +17,7 @@ export default class AboutPage extends Component<Props> {
     this.aboutCommon = new AboutCommon({
       ...this.params,
       navigation: this.props.navigation,
-      flagAbout: FLAG_ABOUT.flag_about_me,
+      flagAbout: FLAG_ABOUT.flag_about,
     }, data => this.setState({...data}))
     this.state = {
       data: config
@@ -30,6 +30,9 @@ export default class AboutPage extends Component<Props> {
         RouteName = 'WebViewPage';
         params.title = '教程';
         params.url = 'https://ml.66jingcai.cn/'
+        break;
+      case MORE_MENU.About_Author:
+        RouteName = 'AboutMePage';
         break;
       case MORE_MENU.Feedback:
         const url = "qqmail://172529131@qq.com"
