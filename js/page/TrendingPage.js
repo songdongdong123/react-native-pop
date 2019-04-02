@@ -41,6 +41,8 @@ import TrendingDialog, {TimeSpans} from '../common/TrendingDialog';
 import EventTypes from '../util/EventTypes';
 import EventBus from 'react-native-event-bus';
 
+import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
+
 // 顶部导航tab标签配置
 const TAB_NAMES = ['All', 'C', 'C#', 'PHP', 'Javascript'];
 const URL = 'https://github.com/trending/';
@@ -51,27 +53,40 @@ const EVENT_TYPE_TIME_SPAN_CHANGE = 'EVENT_TYPE_TIME_SPAN_CHANGE';
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_trending);
 type Props = {};
 
+@connect(
+  state=>state.language,
+  {
+    onLoadLanguage: actions.onLoadLanguage
+  }
+)
 export default class Trending extends Component<Props> {
   constructor (props) {
     super(props);
     this.state = {
       timeSpan: TimeSpans[0]
     }
+    const {onLoadLanguage} = this.props;
+    onLoadLanguage(FLAG_LANGUAGE.flag_language);
+    this.preKeys = [];
   }
   componentDidMount() {
     // console.log(this.props)
   }
   _genTabs () {
     const tabs = {};
-    TAB_NAMES.forEach((item, index) => {
-      tabs[`tab${index}`] = {
-        // 这里使用的箭头函数，所以直接使用props，而不是使用this.props
-        screen: props => <TrendingTab {...props} timeSpan={this.state.timeSpan} tabLabel={item}/>,
-        // screen: function () { //如果是普通函数，则使用this.props
-        //   return <TrendingTab {...this.props} TabLabel={item}/>
-        // },
-        navigationOptions: {
-          title: item
+    const {keys} = this.props;
+    this.preKeys = keys;
+    keys.forEach((item, index) => {
+      if (item.checked) {
+        tabs[`tab${index}`] = {
+          // 这里使用的箭头函数，所以直接使用props，而不是使用this.props
+          screen: props => <TrendingTab {...props} timeSpan={this.state.timeSpan} tabLabel={item.name}/>,
+          // screen: function () { //如果是普通函数，则使用this.props
+          //   return <TrendingTab {...this.props} TabLabel={item}/>
+          // },
+          navigationOptions: {
+            title: item.name
+          }
         }
       }
     });
@@ -142,6 +157,7 @@ export default class Trending extends Component<Props> {
     return this.tabNav;
   }
   render() {
+    const {keys} = this.props;
     // 状态栏设置
     let statusBar = {
       backgroundColor: THEME_COLOR,
@@ -154,10 +170,10 @@ export default class Trending extends Component<Props> {
       style={{backgroundColor: THEME_COLOR}}
     />
     // 顶部标签组件
-    const TabNavigator = this._tabNav();
+    const TabNavigator = keys.length?this._tabNav():null;
     return <View style={{flex:1, marginTop: DeviceInfo.isIphoneX_deprecated?30:0}}>
       {navigationBar}
-      <TabNavigator />
+      {TabNavigator&&<TabNavigator />}
       {this.renderTrendingDialog()}
     </View>
   }

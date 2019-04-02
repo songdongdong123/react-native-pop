@@ -28,6 +28,9 @@ import NavigationBar from '../common/NavigationBar';
 import EventTypes from '../util/EventTypes';
 import EventBus from 'react-native-event-bus';
 
+// 
+import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
+
 // 顶部导航tab标签配置
 const TAB_NAMES = ['Java', 'Android', 'Ios', 'React', 'React-Native', 'PHP'];
 const URL = 'https://api.github.com/search/repositories?q=';
@@ -37,29 +40,44 @@ const PAEG_SIZE = 10;
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 type Props = {};
 
-export default class Popuilar extends Component<Props> {
+@connect(
+  state=>state.language,
+  {
+    onLoadLanguage: actions.onLoadLanguage
+  }
+)
+export default class Popular extends Component<Props> {
   constructor (props) {
     super(props);
+    const {onLoadLanguage} = this.props;
+    // 获取标签数据
+    onLoadLanguage(FLAG_LANGUAGE.flag_key);
   }
   componentDidMount() {
   }
   _genTabs () {
     const tabs = {};
-    TAB_NAMES.forEach((item, index) => {
-      tabs[`tab${index}`] = {
-        // 这里使用的箭头函数，所以直接使用props，而不是使用this.props
-        screen: props => <PopuilarTab {...props} tabLabel={item}/>,
-        // screen: function () { //如果是普通函数，则使用this.props
-        //   return <PopuilarTab {...this.props} TabLabel={item}/>
-        // },
-        navigationOptions: {
-          title: item
+    const {keys} = this.props;
+    keys.forEach((item, index) => {
+      if (item.checked) {
+        tabs[`tab${index}`] = {
+          // 这里使用的箭头函数，所以直接使用props，而不是使用this.props
+          screen: props => <PopuilarTab {...props} tabLabel={item.name}/>,
+          // screen: function () { //如果是普通函数，则使用this.props
+          //   return <PopuilarTab {...this.props} TabLabel={item}/>
+          // },
+          navigationOptions: {
+            title: item.name
+          }
         }
       }
     });
     return tabs;
   }
   render() {
+    // 获取标签
+    const {keys} = this.props;
+    console.log(this.props)
     // 状态栏设置
     let statusBar = {
       backgroundColor: THEME_COLOR,
@@ -72,7 +90,7 @@ export default class Popuilar extends Component<Props> {
       style={{backgroundColor: THEME_COLOR}}
     />
 
-    const TabNavigator =  createAppContainer(createMaterialTopTabNavigator(
+    const TabNavigator =  keys.length ? createAppContainer(createMaterialTopTabNavigator(
       this._genTabs(), {
         // tabBar配置选项
         tabBarOptions: {
@@ -89,10 +107,11 @@ export default class Popuilar extends Component<Props> {
           labelStyle: styles.labelStyle, // 选项卡标签的样式对象(选项卡文字样式,颜色字体大小等)
         }
       }
-    ));
+    )):null;
     return <View style={{flex:1, marginTop: DeviceInfo.isIphoneX_deprecated?30:0}}>
       {navigationBar}
-      <TabNavigator />
+      {/* TabNavigator存在，渲染标签 */}
+      {TabNavigator&&<TabNavigator />}
     </View>
   }
 }
