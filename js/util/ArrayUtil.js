@@ -6,6 +6,42 @@ export default class ArrayUtil {
       if (arr1[i] !== arr2[i]) return false;
     }
     return true;
+  }
+  static updateArray (array, item) {
+    // 更新数组
+    for (let i = 0, len = array.length; i < len; i++) {
+      let temp = array[i];
+      if (item === temp) {
+        array.splice(i, 1);
+        return;
+      }
+    }
+    array.push(item);
+  }
 
+  static remove (array, item, id) {
+    // 移除元素
+    if (!array) return;
+    for (let i = 0, l = array.length; i < l; i++) {
+      const val = array[i];
+      if (item === val || val && val[id] && val[id] === item[id]) {
+        array.splice(i, 1);
+      }
+    }
+    return array;
+  }
+
+  /**
+   * 数组克隆
+   * @param from
+   * @returns {Array}
+   */
+  static clone (from) {
+    if (!from) return []
+    let newArray = []
+    for (let i = 0, length = from.length; i < length; i++) {
+      newArray[i] = from[i]
+    }
+    return newArray
   }
 }

@@ -10,16 +10,18 @@ import { MORE_MENU } from  '../common/MORE_MENU';
 import GobalStyles from '../res/styles/GobalStyles';
 import ViewUtil from '../util/ViewUtil';
 import NavigationUtil from '../navigator/NavigationUtil';
-
-const THEME_COLOR = '#f33'
+import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
 type Props = {};
 @connect(
-  state=>({}),
-  {onThemeChange: actions.onThemeChange}
+  state=>state.theme,
+  {
+    onShowCustomThemeView: actions.onShowCustomThemeView
+  }
 )
 export default class My extends Component<Props> {
   onClick (menu) {
-    let RouteName, params = {};
+    const { theme } = this.props
+    let RouteName, params = {theme};
     switch (menu) {
       case MORE_MENU.Tutorial:
         RouteName = 'WebViewPage';
@@ -32,6 +34,25 @@ export default class My extends Component<Props> {
       case MORE_MENU.About_Author:
         RouteName = 'AboutMePage';
         break;
+      case MORE_MENU.Sort_key:
+        RouteName = 'SortKeyPage';
+        params.flag = FLAG_LANGUAGE.flag_key;
+        break;
+      case MORE_MENU.Sort_Language:
+        RouteName = 'SortKeyPage';
+        params.flag = FLAG_LANGUAGE.flag_language;
+        break;
+      case MORE_MENU.Custom_Theme:
+        const {onShowCustomThemeView} = this.props;
+        onShowCustomThemeView(true);
+        break;
+      case MORE_MENU.Custom_key:
+      case MORE_MENU.Custom_Language:
+      case MORE_MENU.Remove_key:
+        RouteName = 'CustomKeyPage';
+        params.isRemoveKey = menu === MORE_MENU.Remove_key;
+        params.flag = menu !== MORE_MENU.Custom_Language ? FLAG_LANGUAGE.flag_key : FLAG_LANGUAGE.flag_language;
+        break;
       default:
         break;
     }
@@ -40,17 +61,19 @@ export default class My extends Component<Props> {
     }
   }
   getItem (menu) {
-    return ViewUtil.getMenuItem(() => this.onClick(menu), menu, THEME_COLOR);
+    const {theme} = this.props;
+    return ViewUtil.getMenuItem(() => this.onClick(menu), menu, theme.themeColor);
   }
   render() {
+    const {theme} = this.props;
     let statusBar = {
-      backgroundColor: THEME_COLOR,
+      backgroundColor: theme.themeColor,
       barStyle: 'light-content'
     };
     let navigationBar = <NavigationBar
       title={'我的'}
       statusBar={statusBar}
-      style={{backgroundColor:THEME_COLOR}}
+      style={{backgroundColor:theme.themeColor}}
     />
     return (
       <View style={GobalStyles.root_container}>
@@ -66,10 +89,10 @@ export default class My extends Component<Props> {
                 size={40}
                 style={{
                   marginRight: 10,
-                  color: THEME_COLOR
+                  color: theme.themeColor
                 }}
               />
-              <Text>GitHub Popular</Text>
+              <Text>GitHub Populars</Text>
             </View>
             <Ionicons
               name={'ios-arrow-forward'}
@@ -77,7 +100,7 @@ export default class My extends Component<Props> {
               style={{
                 marginRight: 10,
                 alignSelf: 'center',
-                color: THEME_COLOR
+                color: theme.themeColor
               }}
             />
           </TouchableOpacity>

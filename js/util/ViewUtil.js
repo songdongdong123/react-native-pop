@@ -85,6 +85,23 @@ export default class ViewUtil {
   static getMenuItem (callback, menu, color, expandableIcon) {
     return ViewUtil.getSettingItem(callback, menu.name, color, menu.Icons, menu.icon, expandableIcon)
   }
+
+  /**
+   * 获取右侧文字按钮
+   * @param title
+   * @param callBack
+   * @returns {*}
+   */
+  static getRightButton (title, callBack) {
+    return <TouchableOpacity
+      style={{ alignItems: 'center' }}
+      onPress={callBack}
+    >
+      <Text style={{ fontSize: 20, color: '#fff', marginRight: 10 }}>
+        {title}
+      </Text>
+    </TouchableOpacity>
+  }
 }
 
 const styles = StyleSheet.create({

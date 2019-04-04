@@ -35,13 +35,15 @@ import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
 const TAB_NAMES = ['Java', 'Android', 'Ios', 'React', 'React-Native', 'PHP'];
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars'; 
-const THEME_COLOR='#f33';
 const PAEG_SIZE = 10;
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 type Props = {};
 
 @connect(
-  state=>state.language,
+  state=>({
+    keys: state.language.keys,
+    theme: state.theme.theme
+  }),
   {
     onLoadLanguage: actions.onLoadLanguage
   }
@@ -76,26 +78,25 @@ export default class Popular extends Component<Props> {
   }
   render() {
     // 获取标签
-    const {keys} = this.props;
-    console.log(this.props)
+    const {keys, theme} = this.props;
     // 状态栏设置
     let statusBar = {
-      backgroundColor: THEME_COLOR,
+      backgroundColor: theme.themeColor,
       barStyle: 'light-content',
     };
     // 顶部导航栏设置
     let navigationBar = <NavigationBar
       title={'最热'}
       statusBar={statusBar}
-      style={{backgroundColor: THEME_COLOR}}
+      style={{backgroundColor: theme.themeColor}}
     />
 
     const TabNavigator =  keys.length ? createAppContainer(createMaterialTopTabNavigator(
       this._genTabs(), {
         // tabBar配置选项
         tabBarOptions: {
-          inactiveTintColor: '#333',
-          activeTintColor: '#f33',
+          inactiveTintColor: theme.themeColor,
+          activeTintColor: theme.themeColor,
           tabStyle: styles.tabStyle, //选项卡的样式对象
           upperCaseLabel: false, //是否使标签大写，默认为 true。
           scrollEnabled: true, // 是否支持 选项卡滚动 默认为 false
@@ -103,9 +104,13 @@ export default class Popular extends Component<Props> {
             backgroundColor: '#fff',
             height: 35 // fix 开启scrollEnabled后在android上初次渲染的时候会有高度闪烁的问题，所以这里需要固定高度
           },
-          indicatorStyle: styles.indicatorStyle, //选项卡指示器的样式对象（选项卡底部的行）
+          indicatorStyle: {
+            height: 2,
+            backgroundColor: theme.themeColor
+          }, //选项卡指示器的样式对象（选项卡底部的行）
           labelStyle: styles.labelStyle, // 选项卡标签的样式对象(选项卡文字样式,颜色字体大小等)
-        }
+        },
+        lazy: true
       }
     )):null;
     return <View style={{flex:1, marginTop: DeviceInfo.isIphoneX_deprecated?30:0}}>
@@ -187,8 +192,10 @@ class PopuilarTab extends Component<Props> {
   }
   renderItem (data) {
     const item = data.item;
+    const {theme} = this.props.theme
     return <PopularItem 
       projectModel={item}
+      theme={theme}
       onSelect={(callback) => {
         NavigationUtil.goPage({
           projectModel: item,
@@ -210,6 +217,7 @@ class PopuilarTab extends Component<Props> {
   }
   render() {
     let store = this._store(); // 动态获取state
+    const {theme} = this.props.theme
     return (
       <View style={styles.container}>
         <FlatList 
@@ -219,11 +227,11 @@ class PopuilarTab extends Component<Props> {
           refreshControl={
             <RefreshControl 
               title={'Loading'}
-              titleColor={THEME_COLOR}
-              colors={[THEME_COLOR]}
+              titleColor={theme.themeColor}
+              colors={[theme.themeColor]}
               refreshing={store.isLoading}
               onRefresh={() => this.loadData()}
-              tintColor={THEME_COLOR}
+              tintColor={theme.themeColor}
             />
           }
           ListFooterComponent={() => this.genIndicator()}
@@ -262,10 +270,6 @@ const styles = StyleSheet.create({
     // 这里如果固定宽度，android首次渲染的时候，tab的宽度会有问题，这里有坑
     // width: 100,
     padding:0
-  },
-  indicatorStyle: {
-    height: 2,
-    backgroundColor: '#f33'
   },
   labelStyle: {
     fontSize: 13,

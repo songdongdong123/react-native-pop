@@ -7,10 +7,13 @@ import FavoriteDao from '../expand/dao/FavoriteDao';
 // 自定义顶部导航组件
 import NavigationBar from '../common/NavigationBar';
 import ViewUtil from '../util/ViewUtil';
+import {connect} from 'react-redux';
 
-const THEME_COLOR='#f33';
 const TRENDING_URL="https://github.com/"
 type Props = {};
+@connect(
+  state=>state.theme
+)
 export default class WebViewPage extends Component<Props> {
   constructor (props) {
     super(props);
@@ -64,10 +67,11 @@ export default class WebViewPage extends Component<Props> {
     //   barStyle: 'light-content',
     //   hidden: false
     // };
+    const {theme} = this.props;
     let navigationBar = <NavigationBar
       title={this.state.title}
       // statusBar={statusBar}
-      style={{backgroundColor: THEME_COLOR}}
+      style={{backgroundColor: theme.themeColor}}
       leftButton={ViewUtil.getLeftBackButton(() => this.onBackPress())}
     />
     return (

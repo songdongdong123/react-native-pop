@@ -8,14 +8,12 @@ import AboutCommon, {FLAG_ABOUT} from './AboutCommon';
 import config from '../../res/data/github_app_config.json';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-easy-toast';
-
-const THEME_COLOR = '#f33';
 type Props = {};
+
 export default class AboutMePage extends Component<Props> {
   constructor (props) {
     super(props);
     this.params = this.props.navigation.state.params;
-    // debugger
     this.aboutCommon = new AboutCommon({
       ...this.params,
       navigation: this.props.navigation,
@@ -57,19 +55,22 @@ export default class AboutMePage extends Component<Props> {
     }
   }
   getItem (menu) {
-    return ViewUtil.getMenuItem(() => this.onClick(menu), menu, THEME_COLOR);
+    const {theme} = this.params;
+    return ViewUtil.getMenuItem(() => this.onClick(menu), menu, theme.themeColor);
   }
   _item (data, isShow, key) {
     // console.log(this.state.data)
     // debugger
+    const {theme} = this.params;
     return ViewUtil.getSettingItem(() => {
       // 该箭头函数为，传递给getSettingItem中TouchableOpacity组件的onPress回调函数，
       this.setState({
         [key]: !this.state[key]
       })
-    }, data.name, THEME_COLOR, Ionicons, data.icon, isShow?'ios-arrow-up': 'ios-arrow-down')
+    }, data.name, theme.themeColor, Ionicons, data.icon, isShow?'ios-arrow-up': 'ios-arrow-down')
   }
   renderItems (dic, isShowAccount) {
+    const {theme} = this.params;
     if (!dic) return null;
     let views = [];
     for (let i in dic) {
@@ -77,7 +78,7 @@ export default class AboutMePage extends Component<Props> {
       views.push(
         <View key={i}>
           {
-            ViewUtil.getSettingItem(()=> this.onClick(dic[i]), title, THEME_COLOR)
+            ViewUtil.getSettingItem(()=> this.onClick(dic[i]), title, theme.themeColor)
           }
           <View style={GobalStyles.line}/>
         </View>
