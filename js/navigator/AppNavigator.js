@@ -20,7 +20,9 @@ import AsyncStorageDemo from '../page/AsyncStorageDemo'; //AsyncStorage测试页
 import DataStorePage from '../page/DataStorePage';
 import WebViewPage from '../page/WebViewPage'; //浏览器页面
 import AboutPage from '../page/about/AboutPage';
-import AboutMePage from '../page/about/AboutMePage'
+import AboutMePage from '../page/about/AboutMePage';
+import CustomKeyPage from '../page/CustomKeyPage';
+import SortKeyPage from '../page/SortKeyPage';
 
 export const rootCom = 'Init'; //设置跟路由
 
@@ -55,6 +57,12 @@ const MainNavigator = createStackNavigator({
       header: null
     }
   },
+  CustomKeyPage: {
+    screen: CustomKeyPage,
+    navigationOptions: {
+      header: null
+    }
+  },
   AboutPage: {
     screen: AboutPage,
     navigationOptions: {
@@ -63,6 +71,12 @@ const MainNavigator = createStackNavigator({
   },
   AboutMePage: {
     screen: AboutMePage,
+    navigationOptions: {
+      header: null
+    }
+  },
+  SortKeyPage: {
+    screen: SortKeyPage,
     navigationOptions: {
       header: null
     }

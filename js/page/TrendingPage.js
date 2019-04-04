@@ -42,6 +42,7 @@ import EventTypes from '../util/EventTypes';
 import EventBus from 'react-native-event-bus';
 
 import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
+import ArrayUtil from '../util/ArrayUtil';
 
 // 顶部导航tab标签配置
 const TAB_NAMES = ['All', 'C', 'C#', 'PHP', 'Javascript'];
@@ -70,13 +71,13 @@ export default class Trending extends Component<Props> {
     this.preKeys = [];
   }
   componentDidMount() {
-    // console.log(this.props)
+    console.log(this.props)
   }
   _genTabs () {
     const tabs = {};
-    const {keys} = this.props;
-    this.preKeys = keys;
-    keys.forEach((item, index) => {
+    const {languages} = this.props;
+    this.preKeys = languages;
+    languages.forEach((item, index) => {
       if (item.checked) {
         tabs[`tab${index}`] = {
           // 这里使用的箭头函数，所以直接使用props，而不是使用this.props
@@ -134,7 +135,7 @@ export default class Trending extends Component<Props> {
     // 优化效率：根据需要选择是否重新创建TabNavigator
     // 通常tab发生变化，才需要重新创建
     // TabNavigator
-    if (!this.tabNav) {
+    if (!this.tabNav || !ArrayUtil.isEqual(this.preKeys, this.props.key)) {
       this.tabNav =  createAppContainer(createMaterialTopTabNavigator(
         this._genTabs(), {
           // tabBar配置选项
@@ -150,14 +151,16 @@ export default class Trending extends Component<Props> {
             },
             indicatorStyle: styles.indicatorStyle, //选项卡指示器的样式对象（选项卡底部的行）
             labelStyle: styles.labelStyle, // 选项卡标签的样式对象(选项卡文字样式,颜色字体大小等)
-          }
+          },
+          lazy: true
         }
       ));
     }
     return this.tabNav;
   }
   render() {
-    const {keys} = this.props;
+    const {languages} = this.props;
+    console.log(languages)
     // 状态栏设置
     let statusBar = {
       backgroundColor: THEME_COLOR,
@@ -170,7 +173,7 @@ export default class Trending extends Component<Props> {
       style={{backgroundColor: THEME_COLOR}}
     />
     // 顶部标签组件
-    const TabNavigator = keys.length?this._tabNav():null;
+    const TabNavigator = languages.length?this._tabNav():null;
     return <View style={{flex:1, marginTop: DeviceInfo.isIphoneX_deprecated?30:0}}>
       {navigationBar}
       {TabNavigator&&<TabNavigator />}

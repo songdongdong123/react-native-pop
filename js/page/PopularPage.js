@@ -105,7 +105,8 @@ export default class Popular extends Component<Props> {
           },
           indicatorStyle: styles.indicatorStyle, //选项卡指示器的样式对象（选项卡底部的行）
           labelStyle: styles.labelStyle, // 选项卡标签的样式对象(选项卡文字样式,颜色字体大小等)
-        }
+        },
+        lazy: true
       }
     )):null;
     return <View style={{flex:1, marginTop: DeviceInfo.isIphoneX_deprecated?30:0}}>

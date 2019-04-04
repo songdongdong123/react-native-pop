@@ -10,12 +10,16 @@ import { MORE_MENU } from  '../common/MORE_MENU';
 import GobalStyles from '../res/styles/GobalStyles';
 import ViewUtil from '../util/ViewUtil';
 import NavigationUtil from '../navigator/NavigationUtil';
+import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
 
 const THEME_COLOR = '#f33'
 type Props = {};
 @connect(
   state=>({}),
-  {onThemeChange: actions.onThemeChange}
+  {
+    onThemeChange: actions.onThemeChange,
+    onShowCustomThemeView: actions.onShowCustomThemeView
+  }
 )
 export default class My extends Component<Props> {
   onClick (menu) {
@@ -31,6 +35,26 @@ export default class My extends Component<Props> {
         break;
       case MORE_MENU.About_Author:
         RouteName = 'AboutMePage';
+        break;
+      case MORE_MENU.Sort_key:
+        RouteName = 'SortKeyPage';
+        params.flag = FLAG_LANGUAGE.flag_key;
+        break;
+      case MORE_MENU.Sort_Language:
+        RouteName = 'SortKeyPage';
+        params.flag = FLAG_LANGUAGE.flag_language;
+        break;
+      case MORE_MENU.Custom_Theme:
+        const {onShowCustomThemeView} = this.props;
+        onShowCustomThemeView(true);
+        console.log(0)
+        break;
+      case MORE_MENU.Custom_key:
+      case MORE_MENU.Custom_Language:
+      case MORE_MENU.Remove_key:
+        RouteName = 'CustomKeyPage';
+        params.isRemoveKey = menu === MORE_MENU.Remove_key;
+        params.flag = menu !== MORE_MENU.Custom_Language ? FLAG_LANGUAGE.flag_key : FLAG_LANGUAGE.flag_language;
         break;
       default:
         break;

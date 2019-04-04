@@ -294,7 +294,7 @@
   {
     "path": "swift",
     "name": "Swift",
-    "checked": false
+    "checked": true
   },
   {
     "path": "tex",
@@ -304,12 +304,12 @@
   {
     "path": "typescript",
     "name": "TypeScript",
-    "checked": false
+    "checked": true
   },
   {
     "path": "verilog",
     "name": "Verilog",
-    "checked": false
+    "checked": true
   },
   {
     "path": "xslt",
