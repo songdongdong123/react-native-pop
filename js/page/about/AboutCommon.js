@@ -6,11 +6,12 @@ import config from '../../res/data/github_app_config.json';
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import GobalStyles from '../../res/styles/GobalStyles';
 import ViewUtil from '../../util/ViewUtil';
-const THEME_COLOR="#F33";
+
 export const FLAG_ABOUT = {
   flag_about: 'about',
   flag_about_me: 'about_me'
 }
+
 export default class AboutCommon {
   constructor(props, updateState) {
     this.props = props;
@@ -105,9 +106,10 @@ export default class AboutCommon {
   }
   render (contentView, params) {
     const renderConfig = this.getParallaxRenderConfig(params);
+    const {theme} = this.props;
     return (
       <ParallaxScrollView
-        backgroundColor={THEME_COLOR}
+        backgroundColor={theme.themeColor}
         contentBackgroundColor={GobalStyles.backgroundColor}
         parallaxHeaderHeight={PARALLAX_HEADER_HEIGHT}
         stickyHeaderHeight={STICKY_HEADER_HEIGHT}

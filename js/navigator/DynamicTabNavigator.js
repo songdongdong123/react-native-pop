@@ -99,7 +99,7 @@ export default class DynamicTabNavigator extends Component<Props> {
     PopularPage.navigationOptions.tabBarLabel = '最热' //动态配置Tab属性
     return this.Tabs =  createAppContainer(createBottomTabNavigator(tabs, {
       // //这里使用tabBarComponent来覆盖用作标签栏的组件. 达到动态修改标签栏的样式等
-      tabBarComponent: props => <TabBarComponent {...props} theme={this.props.theme}/>  
+      tabBarComponent: props => <TabBarComponent {...props} theme={this.props.theme.themeColor}/>  
     }));
   }
   render() {

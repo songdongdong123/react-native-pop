@@ -30,9 +30,11 @@ import EventBus from 'react-native-event-bus';
 
 // 顶部导航tab标签配置
 const TAB_NAMES = ['最热', '趋势'];
-const THEME_COLOR='#f33';
 type Props = {};
 
+@connect(
+  state=>state.theme
+)
 export default class Favorite extends Component<Props> {
   constructor (props) {
     super(props);
@@ -40,16 +42,17 @@ export default class Favorite extends Component<Props> {
   componentDidMount() {
   }
   render() {
+    const {theme} = this.props;
     // 状态栏设置
     let statusBar = {
-      backgroundColor: THEME_COLOR,
+      backgroundColor: theme.themeColor,
       barStyle: 'light-content',
     };
     // 顶部导航栏设置
     let navigationBar = <NavigationBar
       title={'最热'}
       statusBar={statusBar}
-      style={{backgroundColor: THEME_COLOR}}
+      style={{backgroundColor: theme.themeColor}}
     />
 
     const TabNavigator =  createAppContainer(createMaterialTopTabNavigator({
@@ -68,8 +71,8 @@ export default class Favorite extends Component<Props> {
     }, {
         // tabBar配置选项
         tabBarOptions: {
-          inactiveTintColor: '#333',
-          activeTintColor: '#f33',
+          inactiveTintColor: theme.themeColor,
+          activeTintColor: theme.themeColor,
           tabStyle: styles.tabStyle, //选项卡的样式对象
           upperCaseLabel: false, //是否使标签大写，默认为 true。
           scrollEnabled: false, // 是否支持 选项卡滚动 默认为 false
@@ -77,7 +80,10 @@ export default class Favorite extends Component<Props> {
             backgroundColor: '#fff',
             height: 35 // fix 开启scrollEnabled后在android上初次渲染的时候会有高度闪烁的问题，所以这里需要固定高度
           },
-          indicatorStyle: styles.indicatorStyle, //选项卡指示器的样式对象（选项卡底部的行）
+          indicatorStyle: {
+            height: 2,
+            backgroundColor: theme.themeColor
+          }, //选项卡指示器的样式对象（选项卡底部的行）
           labelStyle: styles.labelStyle, // 选项卡标签的样式对象(选项卡文字样式,颜色字体大小等)
         }
       }
@@ -144,8 +150,10 @@ class FavoriteTab extends Component<Props> {
   renderItem (data) {
     const item = data.item;
     const Item = this.storeName === FLAG_STORAGE.flag_popular ? PopularItem : TrendingItem;
+    const {theme} = this.props.theme;
     return <Item 
       projectModel={item}
+      theme={theme}
       onSelect={(callback) => {
         NavigationUtil.goPage({
           projectModel: item,
@@ -167,6 +175,7 @@ class FavoriteTab extends Component<Props> {
   }
   render() {
     let store = this._store(); // 动态获取state
+    const {theme} = this.props.theme;
     return (
       <View style={styles.container}>
         <FlatList 
@@ -176,11 +185,11 @@ class FavoriteTab extends Component<Props> {
           refreshControl={
             <RefreshControl 
               title={'Loading'}
-              titleColor={THEME_COLOR}
-              colors={[THEME_COLOR]}
+              titleColor={theme.themeColor}
+              colors={[theme.themeColor]}
               refreshing={store.isLoading}
               onRefresh={() => this.loadData(true)}
-              tintColor={THEME_COLOR}
+              tintColor={theme.themeColor}
             />
           }
         />
@@ -201,10 +210,6 @@ const styles = StyleSheet.create({
     // 这里如果固定宽度，android首次渲染的时候，tab的宽度会有问题，这里有坑
     // width: 100,
     padding:0
-  },
-  indicatorStyle: {
-    height: 2,
-    backgroundColor: '#f33'
   },
   labelStyle: {
     fontSize: 13,

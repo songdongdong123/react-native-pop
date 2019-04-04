@@ -31,7 +31,7 @@ export default class CustomKeyPage extends Component {
   onSelectTheme (themeKey) {
     const { onThemeChange } = this.props
     this.props.onClose()
-    this.themeDao.saveTheme(ThemeFlags[themeKey])
+    this.themeDao.save(ThemeFlags[themeKey])
     onThemeChange(ThemeFactory.createTheme(ThemeFlags[themeKey]))
   }
 

@@ -32,10 +32,12 @@ type Props = {};
 )
 export default class SortKeyPage extends Component<Props> {
   constructor (props) {
-    super(props);
+    super(props)
     this.params = this.props.navigation.state.params;
-    this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
+    console.log(this.params)
+    this.backPress = new BackPressComponent({ backPress: (e) => this.onBackPress(e) });
     this.languageDao = new LanguageDao(this.params.flag);
+
     this.state = {
       checkedArray: SortKeyPage._keys(this.props)
     }
@@ -50,7 +52,7 @@ export default class SortKeyPage extends Component<Props> {
         [
           {
             text: '否', onPress: () => {
-              NavigationUtil.goBack({navigation:this.props.navigation})
+              NavigationUtil.goBack({navigation: this.props.navigation})
             }
           }, {
           text: '是', onPress: () => {
@@ -59,24 +61,23 @@ export default class SortKeyPage extends Component<Props> {
         }
         ])
     } else {
-      NavigationUtil.goBack({navigation:this.props.navigation})
+      NavigationUtil.goBack({navigation: this.props.navigation})
     }
   }
   static _keys (props, state) {
     //如果state中有checkedArray则使用state中的checkedArray
-    // debugger
     if (state && state.checkedArray && state.checkedArray.length) {
-      return state.checkedArray;
+      return state.checkedArray
     }
     //否则从原始数据中获取checkedArray
-    const flag = SortKeyPage._flag(props);
-    let dataArray = props.language[flag] || [];
-    let keys = [];
+    const flag = SortKeyPage._flag(props)
+    let dataArray = props.language[flag] || []
+    let keys = []
     for (let i = 0, j = dataArray.length; i < j; i++) {
-      let data = dataArray[i];
-      if (data.checked) keys.push(data);
+      let data = dataArray[i]
+      if (data.checked) keys.push(data)
     }
-    return keys;
+    return keys
   }
   static _flag (props) {
     const { flag } = props.navigation.state.params;
@@ -84,20 +85,19 @@ export default class SortKeyPage extends Component<Props> {
   }
   static getDerivedStateFromProps (nextProps, prevState) {
     const checkedArray = SortKeyPage._keys(nextProps, null, prevState)
-    if (prevState.keys !== checkedArray) {
+    if (prevState.checkedArray.length !== checkedArray.length) {
       return {
-        keys: checkedArray
+        checkedArray,
       }
     }
-    return null;
+    return null
   }
   componentDidMount() {
-    // 注册物理返回键的监听
-    this.backPress.componentDidMount();
-    // 如果props中标签为空，则从本地存储中获取标签
+    this.backPress.componentDidMount()
+    //如果props中标签为空则从本地存储中获取标签
     if (SortKeyPage._keys(this.props).length === 0) {
-      let {onLoadLanguage} = this.props;
-      onLoadLanguage(this.params.flag);
+      const { onLoadLanguage } = this.props
+      onLoadLanguage(this.params.flag)
     }
   }
   componentWillUnmount() {
@@ -158,10 +158,9 @@ export default class SortKeyPage extends Component<Props> {
   onClick (data, index) {
     data.checked = !data.checked;
     ArrayUtil.updateArray(this.changeValues, data);
-    let tempkeys = this.state.keys;
-    tempkeys[index] = data;
+    this.state.keys[index] = data;
     this.setState({
-      keys: tempkeys
+      keys: this.state.keys
     })
   }
   _checkedImage (checked) {
@@ -177,9 +176,10 @@ export default class SortKeyPage extends Component<Props> {
   render() {
     let title = this.params.flag === FLAG_LANGUAGE.flag_language ? '语言排序' : '标签排序'
     // 顶部导航栏设置
+    const { theme } = this.props.theme;
     let navigationBar = <NavigationBar
       title={title}
-      style={{backgroundColor: THEME_COLOR}}
+      style={{backgroundColor: theme.themeColor}}
       leftButton={ViewUtil.getLeftBackButton(() => this.onBackPress())}
       rightButton={ViewUtil.getRightButton('保存', () => this.onSave())}
     />
@@ -203,7 +203,6 @@ export default class SortKeyPage extends Component<Props> {
 
 class SortCell extends Component {
   render () {
-    console.log(this.props)
     const { theme } = this.props
     return <TouchableHighlight
       underlayColor='#eee'
@@ -214,7 +213,7 @@ class SortCell extends Component {
         <MaterialCommunityIcons
           name={'sort'}
           size={16}
-          style={{ marginRight: 10, color: THEME_COLOR }}/>
+          style={{ marginRight: 10, color: theme.themeColor }}/>
         <Text>{this.props.data.name}</Text>
       </View>
     </TouchableHighlight>

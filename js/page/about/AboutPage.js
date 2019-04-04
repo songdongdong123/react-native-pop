@@ -7,8 +7,8 @@ import NavigationUtil from '../../navigator/NavigationUtil';
 import AboutCommon, {FLAG_ABOUT} from './AboutCommon';
 import config from '../../res/data/github_app_config.json';
 
-const THEME_COLOR = '#f33'
 type Props = {};
+
 export default class AboutPage extends Component<Props> {
   constructor (props) {
     super(props);
@@ -54,7 +54,8 @@ export default class AboutPage extends Component<Props> {
     }
   }
   getItem (menu) {
-    return ViewUtil.getMenuItem(() => this.onClick(menu), menu, THEME_COLOR);
+    const {theme} = this.params;
+    return ViewUtil.getMenuItem(() => this.onClick(menu), menu, theme.themeColor);
   }
   render() {
     const content = <View>

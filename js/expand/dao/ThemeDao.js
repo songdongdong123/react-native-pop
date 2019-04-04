@@ -13,14 +13,14 @@ export default class ThemeDao {
     return new Promise((resolve, reject) => {
       AsyncStorage.getItem(THEME_KEY, (error, result) => {
         if (error) {
-          reject(error)
-          return
+          reject(error);
+          return;
         }
         if (!result) {
-          this.save(ThemeFlags.Default)
-          result = ThemeFlags.Default
+          this.save(ThemeFlags.Default);
+          result = ThemeFlags.Default;
         }
-        resolve(ThemeFactory.createTheme(result))
+        resolve(ThemeFactory.createTheme(result));
       })
     })
   }
@@ -30,6 +30,6 @@ export default class ThemeDao {
    * @param themeFlag
    */
   save (themeFlag) {
-    AsyncStorage.setItem(THEME_KEY, themeFlag, (error => {}))
+    AsyncStorage.setItem(THEME_KEY, themeFlag, (error => {}));
   }
 }

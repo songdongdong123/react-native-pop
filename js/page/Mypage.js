@@ -11,19 +11,17 @@ import GobalStyles from '../res/styles/GobalStyles';
 import ViewUtil from '../util/ViewUtil';
 import NavigationUtil from '../navigator/NavigationUtil';
 import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
-
-const THEME_COLOR = '#f33'
 type Props = {};
 @connect(
-  state=>({}),
+  state=>state.theme,
   {
-    onThemeChange: actions.onThemeChange,
     onShowCustomThemeView: actions.onShowCustomThemeView
   }
 )
 export default class My extends Component<Props> {
   onClick (menu) {
-    let RouteName, params = {};
+    const { theme } = this.props
+    let RouteName, params = {theme};
     switch (menu) {
       case MORE_MENU.Tutorial:
         RouteName = 'WebViewPage';
@@ -47,7 +45,6 @@ export default class My extends Component<Props> {
       case MORE_MENU.Custom_Theme:
         const {onShowCustomThemeView} = this.props;
         onShowCustomThemeView(true);
-        console.log(0)
         break;
       case MORE_MENU.Custom_key:
       case MORE_MENU.Custom_Language:
@@ -64,17 +61,19 @@ export default class My extends Component<Props> {
     }
   }
   getItem (menu) {
-    return ViewUtil.getMenuItem(() => this.onClick(menu), menu, THEME_COLOR);
+    const {theme} = this.props;
+    return ViewUtil.getMenuItem(() => this.onClick(menu), menu, theme.themeColor);
   }
   render() {
+    const {theme} = this.props;
     let statusBar = {
-      backgroundColor: THEME_COLOR,
+      backgroundColor: theme.themeColor,
       barStyle: 'light-content'
     };
     let navigationBar = <NavigationBar
       title={'我的'}
       statusBar={statusBar}
-      style={{backgroundColor:THEME_COLOR}}
+      style={{backgroundColor:theme.themeColor}}
     />
     return (
       <View style={GobalStyles.root_container}>
@@ -90,10 +89,10 @@ export default class My extends Component<Props> {
                 size={40}
                 style={{
                   marginRight: 10,
-                  color: THEME_COLOR
+                  color: theme.themeColor
                 }}
               />
-              <Text>GitHub Popular</Text>
+              <Text>GitHub Populars</Text>
             </View>
             <Ionicons
               name={'ios-arrow-forward'}
@@ -101,7 +100,7 @@ export default class My extends Component<Props> {
               style={{
                 marginRight: 10,
                 alignSelf: 'center',
-                color: THEME_COLOR
+                color: theme.themeColor
               }}
             />
           </TouchableOpacity>

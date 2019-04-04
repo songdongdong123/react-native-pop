@@ -21,7 +21,6 @@ import ArrayUtil from '../util/ArrayUtil';
 
 // 
 import LanguageDao, {FLAG_LANGUAGE} from '../expand/dao/LanguageDao';
-const THEME_COLOR='#f33';
 
 type Props = {};
 
@@ -42,6 +41,22 @@ export default class CustomKeyPage extends Component<Props> {
     this.state = {
       keys: []
     }
+  }
+  componentDidMount() {
+    // 注册物理返回键的监听
+    this.backPress.componentDidMount();
+    // 如果props中标签为空，则从本地存储中获取标签
+    if (CustomKeyPage._keys(this.props).length === 0) {
+      let {onLoadLanguage} = this.props;
+      onLoadLanguage(this.params.flag);
+    }
+    this.setState({
+      keys: CustomKeyPage._keys(this.props)
+    })
+  }
+  componentWillUnmount() {
+    // 注销物理返回键的监听
+    this.backPress.componentWillUnmount();
   }
   onBackPress = () => {
     this.onBack();
@@ -89,22 +104,6 @@ export default class CustomKeyPage extends Component<Props> {
     }
     return null;
   }
-  componentDidMount() {
-    // 注册物理返回键的监听
-    this.backPress.componentDidMount();
-    // 如果props中标签为空，则从本地存储中获取标签
-    if (CustomKeyPage._keys(this.props).length === 0) {
-      let {onLoadLanguage} = this.props;
-      onLoadLanguage(this.params.flag);
-    }
-    this.setState({
-      keys: CustomKeyPage._keys(this.props)
-    })
-  }
-  componentWillUnmount() {
-    // 注销物理返回键的监听
-    this.backPress.componentWillUnmount();
-  }
   onSave () {
     if (this.changeValues.length === 0) {
       NavigationUtil.goBack({navigation:this.props.navigation});
@@ -148,11 +147,11 @@ export default class CustomKeyPage extends Component<Props> {
     let tempkeys = this.state.keys;
     tempkeys[index] = data;
     this.setState({
-      keys: tempkey
+      keys: tempkeys
     })
   }
   _checkedImage (checked) {
-    const {theme} = this.props;
+    const {theme} = this.params;
     return <Ionicons 
       name={checked?'ios-checkbox':'md-square-outline'}
       size={20}
@@ -176,9 +175,10 @@ export default class CustomKeyPage extends Component<Props> {
     title = this.params.flag === FLAG_LANGUAGE.flag_language ? '自定义语言': title;
     let rightButtonTitle = this.isRemoveKey?'移除':'保存';
     // 顶部导航栏设置
+    const {theme} = this.params;
     let navigationBar = <NavigationBar
       title={title}
-      style={{backgroundColor: THEME_COLOR}}
+      style={{backgroundColor: theme.themeColor}}
       leftButton={ViewUtil.getLeftBackButton(() => this.onBackPress())}
       rightButton={ViewUtil.getRightButton(rightButtonTitle, () => this.onSave())}
     />

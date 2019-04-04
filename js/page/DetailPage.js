@@ -7,10 +7,13 @@ import FavoriteDao from '../expand/dao/FavoriteDao';
 // 自定义顶部导航组件
 import NavigationBar from '../common/NavigationBar';
 import ViewUtil from '../util/ViewUtil';
+import {connect} from 'react-redux';
 
-const THEME_COLOR='#f33';
 const TRENDING_URL="https://github.com/"
 type Props = {};
+@connect(
+  state=>state.theme
+)
 export default class Detail extends Component<Props> {
   constructor (props) {
     super(props);
@@ -95,12 +98,13 @@ export default class Detail extends Component<Props> {
   }
   render() {
     // 顶部导航栏设置
+    const {theme} = this.props;
     const titleLayoutStyle = this.state.title.length > 20 ?{paddingRight: 30,} : null;
     let navigationBar = <NavigationBar
       leftButton={ViewUtil.getLeftBackButton(() => this.onBack())}
       titleLayoutStyle={titleLayoutStyle}
       title={this.state.title}
-      style={{backgroundColor: THEME_COLOR}}
+      style={{backgroundColor: theme.themeColor}}
       rightButton={this.renderRightButton()}
     />
     return (

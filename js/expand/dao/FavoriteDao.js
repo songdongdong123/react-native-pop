@@ -5,7 +5,6 @@ const FAVORITE_KEY_PREFIX = 'favorite_';
 export default class FavoriteDao {
   constructor (flag) {
     this.favoriteKey = FAVORITE_KEY_PREFIX + flag;
-    console.log(this.favoriteKey)
   }
   /**
    * 收藏项目，保存收藏项目

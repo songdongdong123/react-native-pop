@@ -5,11 +5,8 @@ import ThemeDao from '../../../expand/dao/ThemeDao';
  * @param theme
  * @returns {{theme: *, type: string}}
  */
-export function onThemeChange(theme) {
-  return {
-    type: Types.THEME_CHANGE,
-    theme: theme
-  }
+export function onThemeChange (theme) {
+  return { type: Types.THEME_CHANGE, theme }
 }
 
 /**
