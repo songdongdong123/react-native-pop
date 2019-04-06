@@ -24,7 +24,8 @@ export default class AboutPage extends Component<Props> {
     }
   }
   onClick (menu) {
-    let RouteName, params = {};
+    const {theme} = this.params;
+    let RouteName, params = {theme};
     switch (menu) {
       case MORE_MENU.Tutorial:
         RouteName = 'WebViewPage';

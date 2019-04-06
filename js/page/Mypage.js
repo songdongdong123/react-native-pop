@@ -73,7 +73,7 @@ export default class My extends Component<Props> {
     let navigationBar = <NavigationBar
       title={'我的'}
       statusBar={statusBar}
-      style={{backgroundColor:theme.themeColor}}
+      style={theme.styles.navBar}
     />
     return (
       <View style={GobalStyles.root_container}>

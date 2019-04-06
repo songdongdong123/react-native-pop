@@ -82,7 +82,7 @@ export default class CustomKeyPage extends Component {
   }
 
   render () {
-    let view = this.props.visible ? <View style={GlobalStyles.root_container}>
+    let view = this.props.visible ? <View>
       {this.renderContentView()}
     </View> : null
     return view
