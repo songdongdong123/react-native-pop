@@ -25,6 +25,7 @@ import EventBus from 'react-native-event-bus';
 
 // 
 import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
+import GlobalStyles from '../res/styles/GobalStyles'
 
 // 顶部导航tab标签配置
 const TAB_NAMES = ['Java', 'Android', 'Ios', 'React', 'React-Native', 'PHP'];
@@ -40,7 +41,7 @@ type Props = {};
     search: state.search,
   }),
   {
-    onSearch: onSearch,
+    onSearch: actions.onSearch,
     onSearchCancel: actions.onSearchCancel,
     onLoadMoreSearch: actions.onLoadMoreSearch,
     onLoadLanguage: actions.onLoadLanguage
