@@ -47,3 +47,9 @@ export async function _projectModels (showItems, favoriteDao, callback) {
     callback(projectModels);
   }
 }
+
+export const doCallBack = (callBack, object) => {
+  if (typeof callBack === 'function') {
+    callBack(object)
+  }
+}

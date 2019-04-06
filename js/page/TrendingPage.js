@@ -131,7 +131,7 @@ export default class Trending extends Component<Props> {
       onSelect={(tab, index)=>this.onSelectTimeSpan(tab, index)}
     />
   }
-  _tabNav () {
+  _tabNav = () => {
     // 优化效率：根据需要选择是否重新创建TabNavigator
     // 通常tab发生变化，才需要重新创建
     // TabNavigator
@@ -229,6 +229,8 @@ class TrendingTab extends Component<Props> {
     // 移除监听器
     EventBus.getInstance().removeListener(this.favoriteChangeListener);
     EventBus.getInstance().removeListener(this.botomTabSelectListener);
+    // debugger
+    // this.loadData = null;
   }
   loadData (loadMore, refreshFavorite) {
     // 加载数据
