@@ -4,9 +4,9 @@
 
 ## 目录
 
-* [下载] (#下载)
-* [功能] (#功能)
-* [运行调试] (#运行调试)
+* [下载](#下载)
+* [功能](#功能)
+* [运行调试](#运行调试)
 
 ## 下载
 ![APP QRcode](https://github.com/songdongdong123/Github_RN/blob/master/assets/qrcode.png)
