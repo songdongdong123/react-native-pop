@@ -1,6 +1,7 @@
 import Types from '../action_types';
-import { _projectModels, doCallBack, handleData } from '../ActionUtil';
-import ArrayUtil from '../../../util/ArrayUtil'
+import handleData, { _projectModels, doCallBack } from '../ActionUtil';
+import ArrayUtil from '../../../util/ArrayUtil';
+import Utils from '../../../util/Utils';
 
 const API_URL = 'https://api.github.com/search/repositories?q='
 const QUERY_STR = '&sort=stars'
@@ -33,9 +34,9 @@ export function onSearch (inputKey, pageSize, token, favoriteDao, popularKeys, c
         doCallBack(callBack, `没找到关于${inputKey}的项目`)
         return
       }
-      let items = res.items
+      let items = res.items;
       handleData(Types.SEARCH_REFRESH_SUCCESS, dispatch, '', { data: items }, pageSize, favoriteDao, {
-        showBottomButton: checkKeyIsExist(popularKeys, inputKey),
+        showBottomButton: !Utils.checkKeyIsExist(popularKeys, inputKey),
         inputKey
       })
     }).catch(err => {
@@ -108,17 +109,7 @@ function hasCancel (token, isRemove) {
   return false
 }
 
-/**
-  * 检查key是否存在于keys中
-  * @param keys
-  * @param key
-*/
-function checkKeyIsExist (keys, key) {
-  for (let i = 0, l = keys.length; i < l; i++) {
-    if (key.toLowerCase() === keys[i].name.toLowerCase()) return true
-  }
-  return false
-}
+
 
 /**
    * 检查该Item是否被收藏

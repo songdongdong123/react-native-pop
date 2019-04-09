@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Image, Text, Dimensions, Platform, StyleSheet} from 'react-native';
+import {View, Image, Text, Dimensions, Platform, StyleSheet, DeviceInfo} from 'react-native';
 import BackPressComponent from '../../common/BackPressComponent';
 import NavigationUtil from  '../../navigator/NavigationUtil';
 import config from '../../res/data/github_app_config.json';
@@ -125,7 +125,8 @@ export default class AboutCommon {
 const window = Dimensions.get('window');
 const AVATAR_SIZE = 90;
 const PARALLAX_HEADER_HEIGHT = 270;
-const STICKY_HEADER_HEIGHT = (Platform.OS === 'ios') ? GobalStyles.nav_bar_height_ios + 20 : GobalStyles.nav_bar_height_android;
+const TOP = (Platform.OS === 'ios') ? 20 + (DeviceInfo.isIPhoneX_deprecated?24:0):0;
+const STICKY_HEADER_HEIGHT = (Platform.OS === 'ios') ? GobalStyles.nav_bar_height_ios + TOP : GobalStyles.nav_bar_height_android;
 
 const styles = StyleSheet.create({
   container: {
@@ -142,7 +143,8 @@ const styles = StyleSheet.create({
   stickySection: {
     height: STICKY_HEADER_HEIGHT,
     // width: 300,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingTop: TOP,
   },
   stickySectionText: {
     color: 'white',
@@ -156,7 +158,7 @@ const styles = StyleSheet.create({
     right:0,
     bottom:0,
     paddingRight: 8,
-    paddingTop: (Platform.OS === 'ios')?20:0,
+    paddingTop: TOP,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent:'space-between'

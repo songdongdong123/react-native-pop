@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import {StyleSheet,
   DeviceInfo, 
   Platform,
+  TextInput,
+  TouchableOpacity,
   ActivityIndicator, View, Text, FlatList, RefreshControl } from 'react-native';
 import Toast from 'react-native-easy-toast';
 import {connect} from 'react-redux';
@@ -15,6 +17,7 @@ import {
 import NavigationUtil from '../navigator/NavigationUtil';
 import FavoriteUtil from '../util/FavoriteUtil';
 import PopularItem from '../common/PopularItem';
+import ViewUtil from '../util/ViewUtil';
 import BackPressComponent from '../common/BackPressComponent';
 // 自定义顶部导航组件
 import NavigationBar from '../common/NavigationBar';
@@ -25,7 +28,8 @@ import EventBus from 'react-native-event-bus';
 
 // 
 import LanguageDao, { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
-import GlobalStyles from '../res/styles/GobalStyles'
+import GlobalStyles from '../res/styles/GobalStyles';
+import Utils from '../util/Utils';
 
 // 顶部导航tab标签配置
 const TAB_NAMES = ['Java', 'Android', 'Ios', 'React', 'React-Native', 'PHP'];
@@ -66,11 +70,11 @@ export default class Search extends Component<Props> {
   loadData = (loadMore) => {
     const { onLoadMoreSearch, onSearch, search, keys } = this.props
     if (loadMore) {
-      onLoadMoreSearch(++search.pageIndex, pageSize, search.items, this.favoriteDao, keys, callback => {
+      onLoadMoreSearch(++search.pageIndex, PAEG_SIZE, search.items, this.favoriteDao, keys, callback => {
         this.toast.show('没有更多了')
       })
     } else {
-      onSearch(this.inputKey, pageSize, this.searchToken = new Date().getTime(), this.favoriteDao, keys, message => {
+      onSearch(this.inputKey, PAEG_SIZE, this.searchToken = new Date().getTime(), this.favoriteDao, keys, message => {
         this.toast.show(message)
       })
     }
@@ -79,7 +83,7 @@ export default class Search extends Component<Props> {
     const { onSearchCancel, onLoadLanguage } = this.props
     onSearchCancel()//退出时取消搜索
     this.refs.input.blur()
-    NavigationUtil.goBack(this.props.navigation)
+    NavigationUtil.goBack({navigation: this.props.navigation})
     if (this.isKeyChange) {
       onLoadLanguage(FLAG_LANGUAGE.flag_key)
     }

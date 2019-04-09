@@ -8,7 +8,9 @@
  */
 
 import React, {Component} from 'react';
-import {StyleSheet,DeviceInfo, ActivityIndicator, View, Text, FlatList, RefreshControl } from 'react-native';
+import {StyleSheet,DeviceInfo, ActivityIndicator, 
+TouchableOpacity,
+View, Text, FlatList, RefreshControl } from 'react-native';
 import Toast from 'react-native-easy-toast';
 import {connect} from 'react-redux';
 import actions from '../redux/action';
@@ -23,6 +25,7 @@ import FavoriteUtil from '../util/FavoriteUtil';
 import PopularItem from '../common/PopularItem';
 // 自定义顶部导航组件
 import NavigationBar from '../common/NavigationBar';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 //用于页面之间通讯
 import EventTypes from '../util/EventTypes';
@@ -76,6 +79,26 @@ export default class Popular extends Component<Props> {
     });
     return tabs;
   }
+  renderRightButton () {
+    const {theme} = this.props;
+    return <TouchableOpacity
+      onPress={() => {
+        NavigationUtil.goPage({theme}, 'SearchPage')
+      }}
+    >
+      <View style={{padding: 5, marginRight: 8,}}>
+        <Ionicons
+          name={'ios-search'}
+          size={24}
+          style={{
+            marginRight: 8,
+            alignSelf: 'center',
+            color: 'white'
+          }}
+        />
+      </View>
+    </TouchableOpacity>
+  }
   render() {
     // 获取标签
     const {keys, theme} = this.props;
@@ -89,6 +112,7 @@ export default class Popular extends Component<Props> {
       title={'最热'}
       statusBar={statusBar}
       style={{backgroundColor: theme.themeColor}}
+      rightButton={this.renderRightButton()}
     />
 
     const TabNavigator =  keys.length ? createAppContainer(createMaterialTopTabNavigator(
@@ -113,7 +137,7 @@ export default class Popular extends Component<Props> {
         lazy: true
       }
     )):null;
-    return <View style={{flex:1, marginTop: DeviceInfo.isIphoneX_deprecated?30:0}}>
+    return <View style={styles.container}>
       {navigationBar}
       {/* TabNavigator存在，渲染标签 */}
       {TabNavigator&&<TabNavigator />}
