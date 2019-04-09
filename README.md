@@ -7,7 +7,7 @@
 *[下载] (#下载)
 
 ## 下载
-![APP QRcode](https://github.com/songdongdong123/Github_RN/assets/qrcode.png)
+![APP QRcode](https://github.com/songdongdong123/Github_RN/blob/master/assets/qrcode.png)
 
 ## 功能与特性
 
