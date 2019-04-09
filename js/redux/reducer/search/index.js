@@ -20,6 +20,7 @@ export default function onAction (state = defaultState, action) {
         showText: '取消'
       }
     case Types.SEARCH_REFRESH_SUCCESS://获取数据成功
+      console.log(action)
       return {
         ...state,//原始数据
         isLoading: false,

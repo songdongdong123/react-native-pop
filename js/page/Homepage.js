@@ -4,6 +4,8 @@ import NavigationUtil from '../navigator/NavigationUtil';
 import DynamicTabNavigator from '../navigator/DynamicTabNavigator';
 import BackPressComponent from '../common/BackPressComponent';
 import CustomTheme from '../page/CustomTheme';
+import SafeAreaViewPlus from '../common/SafeAreaViewPlus';
+import SplashScreen from 'react-native-splash-screen'
 
 // 处理安卓的物理返回键
 import {BackHandler} from 'react-native';
@@ -15,7 +17,8 @@ type Props = {};
 @connect(
   state=>({
     nav: state.nav,
-    customThemeViewVisible: state.theme.customThemeViewVisible
+    customThemeViewVisible: state.theme.customThemeViewVisible,
+    theme: state.theme
   }),
   {
     onShowCustomThemeView: actions.onShowCustomThemeView
@@ -28,6 +31,7 @@ export default class Home extends Component<Props> {
   }
   componentDidMount () {
     // 注册物理返回键的监听
+    SplashScreen && SplashScreen.hide()
     this.backPress.componentDidMount();
   }
   componentWillUnmount() {
@@ -61,12 +65,15 @@ export default class Home extends Component<Props> {
   render() {
     // 内层的navigator往外层的navigator跳转的时候无法跳转，
     // 这个时候可以在内层保存外层的navigation
+    const {theme} = this.props;
     NavigationUtil.navigation = this.props.navigation; // 给导航管理类添加静态属性
     return (
-      <View style={{flex: 1}}>
+      <SafeAreaViewPlus
+        topColor={theme.themeColor}
+      >
         {this.renderCustomThemeView()}
         <DynamicTabNavigator />
-      </View>
+      </SafeAreaViewPlus>
     )
   }
 }

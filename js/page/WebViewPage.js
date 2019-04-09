@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {StyleSheet,DeviceInfo, WebView, TouchableOpacity, Text, View} from 'react-native';
+import {StyleSheet,DeviceInfo, TouchableOpacity, Text, View} from 'react-native';
+import { WebView } from 'react-native-webview';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import NavigationUtil from  '../navigator/NavigationUtil';
 import BackPressComponent from '../common/BackPressComponent';

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {StyleSheet,DeviceInfo, WebView, TouchableOpacity, Text, View} from 'react-native';
+import {StyleSheet,DeviceInfo, TouchableOpacity, Text, View} from 'react-native';
+import { WebView } from 'react-native-webview';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import NavigationUtil from  '../navigator/NavigationUtil';
 import BackPressComponent from '../common/BackPressComponent';
@@ -8,6 +9,7 @@ import FavoriteDao from '../expand/dao/FavoriteDao';
 import NavigationBar from '../common/NavigationBar';
 import ViewUtil from '../util/ViewUtil';
 import {connect} from 'react-redux';
+import SafeAreaViewPlus from '../common/SafeAreaViewPlus';
 
 const TRENDING_URL="https://github.com/"
 type Props = {};
@@ -108,7 +110,9 @@ export default class Detail extends Component<Props> {
       rightButton={this.renderRightButton()}
     />
     return (
-      <View style={styles.container}>
+      <SafeAreaViewPlus
+        topColor={theme.themeColor}
+      >
         {navigationBar}
         <WebView
           ref={webView => this.webView = webView}
@@ -116,7 +120,7 @@ export default class Detail extends Component<Props> {
           onNavigationStateChange={(e) => {this.onNavigationStateChange(e)}}
           source={{uri:this.state.url}}
         />
-      </View>
+      </SafeAreaViewPlus>
     );
   }
 }

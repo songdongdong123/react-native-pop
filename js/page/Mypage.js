@@ -26,7 +26,7 @@ export default class My extends Component<Props> {
       case MORE_MENU.Tutorial:
         RouteName = 'WebViewPage';
         params.title = '教程';
-        params.url = 'https://ml.66jingcai.cn/'
+        params.url = 'https://github.com/songdongdong123'
         break;
       case MORE_MENU.About:
         RouteName = 'AboutPage';

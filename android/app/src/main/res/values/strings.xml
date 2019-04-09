@@ -1,3 +1,5 @@
 <resources>
+	<string moduleConfig="true" name="reactNativeCodePush_androidDeploymentKey">E_PSonWckd1Pyhp-6okocqPLw21a10f04d24-92c2-41a5-84ae-b434a9f20a91</string>
+
     <string name="app_name">Github_RN</string>
 </resources>
