@@ -24,6 +24,7 @@ import AboutMePage from '../page/about/AboutMePage';
 import CustomKeyPage from '../page/CustomKeyPage';
 import SortKeyPage from '../page/SortKeyPage';
 import SearchPage from '../page/SearchPage';
+import CodePushPage from '../page/CodePushPage'
 
 export const rootCom = 'Init'; //设置跟路由
 
@@ -84,6 +85,12 @@ const MainNavigator = createStackNavigator({
   },
   SearchPage: {
     screen: SearchPage,
+    navigationOptions: {
+      header: null
+    }
+  },
+  CodePushPage : {
+    screen: CodePushPage ,
     navigationOptions: {
       header: null
     }

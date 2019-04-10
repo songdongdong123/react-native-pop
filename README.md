@@ -11,7 +11,7 @@
 ## 下载
 ![APP QRcode](https://github.com/songdongdong123/Github_RN/blob/master/assets/qrcode.png)
 
-## 功能与特性
+## 功能
 
 * 支持订阅多种编程语言;
 * 支持添加/删除编程语言;
