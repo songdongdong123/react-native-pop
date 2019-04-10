@@ -30,6 +30,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 //用于页面之间通讯
 import EventTypes from '../util/EventTypes';
 import EventBus from 'react-native-event-bus';
+import AnalyticsUtil from '../util/AnalyticsUtil';
 
 // 
 import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
@@ -83,6 +84,7 @@ export default class Popular extends Component<Props> {
     const {theme} = this.props;
     return <TouchableOpacity
       onPress={() => {
+        AnalyticsUtil.onEvent('SearchClick');
         NavigationUtil.goPage({theme}, 'SearchPage')
       }}
     >
