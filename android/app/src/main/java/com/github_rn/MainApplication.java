@@ -12,6 +12,7 @@ import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.github_rn.invokenative.DplusReactPackage;
 
 
 import java.util.Arrays;
@@ -39,7 +40,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNCWebViewPackage(),
             new SplashScreenReactPackage(),
             new VectorIconsPackage(),
-            new RNGestureHandlerPackage()
+            new RNGestureHandlerPackage(),
+            new DplusReactPackage()
       );
     }
 
