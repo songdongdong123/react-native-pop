@@ -1,6 +1,5 @@
 import Types from '../../action/action_types';
 import ThemeFactory, {ThemeFlags} from '../../../res/styles/ThemeFactory';
-console.log(ThemeFactory.createTheme(ThemeFlags.Default))
 const defaultState = {
   theme: ThemeFactory.createTheme(ThemeFlags.Default),
   customThemeViewVisible: false
