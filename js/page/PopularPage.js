@@ -60,6 +60,7 @@ export default class Popular extends Component<Props> {
     onLoadLanguage(FLAG_LANGUAGE.flag_key);
   }
   componentDidMount() {
+    AnalyticsUtil.onPageStart('Popular');
   }
   _genTabs () {
     const tabs = {};
@@ -84,7 +85,12 @@ export default class Popular extends Component<Props> {
     const {theme} = this.props;
     return <TouchableOpacity
       onPress={() => {
-        AnalyticsUtil.onEvent('SearchClick');
+        AnalyticsUtil.onEvent('event1');
+        // AnalyticsUtil.onEvent('SearchClick');
+        // AnalyticsUtil.onEvent('01');
+        // AnalyticsUtil.onEventWithMap('SearchClick',{
+        //   name: 'umeng'
+        // });
         NavigationUtil.goPage({theme}, 'SearchPage')
       }}
     >
