@@ -14,8 +14,6 @@ import org.devio.rn.splashscreen.SplashScreen; // here
 
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.commonsdk.UMConfigure;
-// import com.umeng.message.IUmengRegisterCallback;
-// import com.umeng.message.PushAgent;
 
 public class MainActivity extends ReactActivity {
 
@@ -26,9 +24,9 @@ public class MainActivity extends ReactActivity {
         // 注意：如果您已经在AndroidManifest.xml中配置过appkey和channel值，可以调用此版本初始化函数。
         UMConfigure.init(this, "5caac8a63fc1955789000d88", "Umeng", UMConfigure.DEVICE_TYPE_PHONE, null);
         // interval: 单位是毫秒，默认Session间隔时间是30秒
-        MobclickAgent.setSessionContinueMillis(30000);
-        MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_MANUAL);
+        UMConfigure.setLogEnabled(true);
         UMConfigure.setProcessEvent(true);
+        MobclickAgent.setSessionContinueMillis(30000);
     }
 
     public void onResume() {
