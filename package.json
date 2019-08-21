@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
+    //code-push release-react hui_ying  android --t 1.0.0 --dev false --d Production --des "修复" --m true
     "test": "jest",
     "debug": "redux-devtools"
   },
