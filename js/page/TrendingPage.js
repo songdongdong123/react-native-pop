@@ -37,39 +37,57 @@ import NavigationBar from '../common/NavigationBar';
 // 自定义弹窗
 import TrendingDialog, {TimeSpans} from '../common/TrendingDialog';
 
-import { getAccountList } from '../axios/api/account';
+//用于页面之间通讯
+import EventTypes from '../util/EventTypes';
+import EventBus from 'react-native-event-bus';
 
-// 顶部导航tab标签配置
-const TAB_NAMES = ['All', 'C', 'C#', 'PHP', 'Javascript'];
+import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
+import ArrayUtil from '../util/ArrayUtil';
+
 const URL = 'https://github.com/trending/';
 const QUERY_STR = '&sort=stars'; 
-const THEME_COLOR='#f33';
 const PAEG_SIZE = 10;
 const EVENT_TYPE_TIME_SPAN_CHANGE = 'EVENT_TYPE_TIME_SPAN_CHANGE';
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_trending);
 type Props = {};
 
+@connect(
+  state=>({
+    languages: state.language.languages,
+    theme: state.theme.theme
+  }),
+  {
+    onLoadLanguage: actions.onLoadLanguage
+  }
+)
 export default class Trending extends Component<Props> {
   constructor (props) {
     super(props);
     this.state = {
       timeSpan: TimeSpans[0]
     }
+    const {onLoadLanguage} = this.props;
+    onLoadLanguage(FLAG_LANGUAGE.flag_language);
+    this.preKeys = [];
   }
   componentDidMount() {
-    // console.log(this.props)
+
   }
   _genTabs () {
     const tabs = {};
-    TAB_NAMES.forEach((item, index) => {
-      tabs[`tab${index}`] = {
-        // 这里使用的箭头函数，所以直接使用props，而不是使用this.props
-        screen: props => <TrendingTab {...props} timeSpan={this.state.timeSpan} tabLabel={item}/>,
-        // screen: function () { //如果是普通函数，则使用this.props
-        //   return <TrendingTab {...this.props} TabLabel={item}/>
-        // },
-        navigationOptions: {
-          title: item
+    const {languages} = this.props;
+    this.preKeys = languages;
+    languages.forEach((item, index) => {
+      if (item.checked) {
+        tabs[`tab${index}`] = {
+          // 这里使用的箭头函数，所以直接使用props，而不是使用this.props
+          screen: props => <TrendingTab {...props} timeSpan={this.state.timeSpan} tabLabel={item.name}/>,
+          // screen: function () { //如果是普通函数，则使用this.props
+          //   return <TrendingTab {...this.props} TabLabel={item}/>
+          // },
+          navigationOptions: {
+            title: item.name
+          }
         }
       }
     });
@@ -113,17 +131,19 @@ export default class Trending extends Component<Props> {
       onSelect={(tab, index)=>this.onSelectTimeSpan(tab, index)}
     />
   }
-  _tabNav () {
+  _tabNav = () => {
     // 优化效率：根据需要选择是否重新创建TabNavigator
     // 通常tab发生变化，才需要重新创建
     // TabNavigator
-    if (!this.tabNav) {
+    const {theme} = this.props;
+    if (theme !== this.theme || !this.tabNav || !ArrayUtil.isEqual(this.preKeys, this.props.key)) {
+      this.theme = theme
       this.tabNav =  createAppContainer(createMaterialTopTabNavigator(
         this._genTabs(), {
           // tabBar配置选项
           tabBarOptions: {
-            inactiveTintColor: '#333',
-            activeTintColor: '#f33',
+            inactiveTintColor: theme.themeColor,
+            activeTintColor: theme.themeColor,
             tabStyle: styles.tabStyle, //选项卡的样式对象
             upperCaseLabel: false, //是否使标签大写，默认为 true。
             scrollEnabled: true, // 是否支持 选项卡滚动 默认为 false
@@ -131,31 +151,36 @@ export default class Trending extends Component<Props> {
               backgroundColor: '#fff', //fix 开启scrollEnabled后在android上初次渲染的时候会有高度闪烁的问题，所以这里需要固定高度
               height:35
             },
-            indicatorStyle: styles.indicatorStyle, //选项卡指示器的样式对象（选项卡底部的行）
+            indicatorStyle: {
+              height: 2,
+              backgroundColor: theme.themeColor
+            }, //选项卡指示器的样式对象（选项卡底部的行）
             labelStyle: styles.labelStyle, // 选项卡标签的样式对象(选项卡文字样式,颜色字体大小等)
-          }
+          },
+          lazy: true
         }
       ));
     }
     return this.tabNav;
   }
   render() {
+    const {languages, theme} = this.props;
     // 状态栏设置
     let statusBar = {
-      backgroundColor: THEME_COLOR,
+      backgroundColor: theme.themeColor,
       barStyle: 'light-content'
     };
     // 顶部导航栏设置
     let navigationBar = <NavigationBar
       titleView={this.renderTitleView()}
       statusBar={statusBar}
-      style={{backgroundColor: THEME_COLOR}}
+      style={{backgroundColor: theme.themeColor}}
     />
     // 顶部标签组件
-    const TabNavigator = this._tabNav();
-    return <View style={{flex:1, marginTop: DeviceInfo.isIphoneX_deprecated?30:0}}>
+    const TabNavigator = languages.length?this._tabNav():null;
+    return <View style={styles.container}>
       {navigationBar}
-      <TabNavigator />
+      {TabNavigator&&<TabNavigator />}
       {this.renderTrendingDialog()}
     </View>
   }
@@ -166,7 +191,8 @@ export default class Trending extends Component<Props> {
   state=>state,
   {
     onLoadTrendingData: actions.onLoadTrendingData,
-    onLoadMoreTrending: actions.onLoadMoreTrending
+    onLoadMoreTrending: actions.onLoadMoreTrending,
+    onFlushTrendingFavorite: actions.onFlushTrendingFavorite
   }
 )
 class TrendingTab extends Component<Props> {
@@ -175,6 +201,8 @@ class TrendingTab extends Component<Props> {
     const {tabLabel, timeSpan} = this.props;
     this.storeName =  tabLabel;
     this.timeSpan = timeSpan;
+    // 是否刷新页面的收藏状态
+    this.isFavoriteChanged = false;
   }
   componentDidMount() {
     this.loadData();
@@ -182,21 +210,39 @@ class TrendingTab extends Component<Props> {
       this.timeSpan = timeSpan;
       this.loadData();
     });
+
+    EventBus.getInstance().addListener(EventTypes.favorite_changed_trending, this.favoriteChangeListener = () => {
+      // 收藏页面状态变化的通知
+      this.isFavoriteChanged = true;
+    });
+    EventBus.getInstance().addListener(EventTypes.bottom_tab_select, this.botomTabSelectListener = (data) => {
+      // 底部tab切换的通知
+      if (data.to === 1 && this.isFavoriteChanged) {
+        this.loadData(null, true);
+      }
+    });
   }
   componentWillUnmount () {
     if (this.timeSpanChangeListener) {
       this.timeSpanChangeListener.remove();
     }
+    // 移除监听器
+    EventBus.getInstance().removeListener(this.favoriteChangeListener);
+    EventBus.getInstance().removeListener(this.botomTabSelectListener);
+    // debugger
+    // this.loadData = null;
   }
-  loadData (loadMore) {
+  loadData (loadMore, refreshFavorite) {
     // 加载数据
-    const {onLoadTrendingData, onLoadMoreTrending} = this.props;
+    const {onLoadTrendingData, onLoadMoreTrending, onFlushTrendingFavorite} = this.props;
     const store = this._store();
     const url = this.genFetchUrl(this.storeName);
     if (loadMore) {
       onLoadMoreTrending(this.storeName,++store.pageIndex, PAEG_SIZE, store.items, favoriteDao, callback => {
         this.refs.toast.show('没有更多了');
       })
+    } else if (refreshFavorite) {
+      onFlushTrendingFavorite(this.storeName, store.pageIndex, PAEG_SIZE, store.items, favoriteDao)
     } else {
       onLoadTrendingData(this.storeName, url, PAEG_SIZE, favoriteDao);
     }
@@ -221,8 +267,10 @@ class TrendingTab extends Component<Props> {
   }
   renderItem (data) {
     const item = data.item;
+    const {theme} = this.props.theme;
     return <TrendingItem 
       projectModel={item}
+      theme={theme}
       onSelect={(callback) => {
         NavigationUtil.goPage({
           projectModel: item,
@@ -244,6 +292,7 @@ class TrendingTab extends Component<Props> {
   }
   render() {
     let store = this._store(); // 动态获取state
+    const {theme} = this.props.theme
     return (
       <View style={styles.container}>
         <FlatList 
@@ -253,11 +302,11 @@ class TrendingTab extends Component<Props> {
           refreshControl={
             <RefreshControl 
               title={'Loading'}
-              titleColor={THEME_COLOR}
-              colors={[THEME_COLOR]}
+              titleColor={theme.themeColor}
+              colors={[theme.themeColor]}
               refreshing={store.isLoading}
               onRefresh={() => this.loadData()}
-              tintColor={THEME_COLOR}
+              tintColor={theme.themeColor}
             />
           }
           ListFooterComponent={() => this.genIndicator()}

@@ -8,7 +8,7 @@ import ProjectModel from '../../model/ProjectModel';
  * @param {*} data
  * @param {*} pageSize
  */
-export default function handleData (actionType, dispatch, storeName, data, pageSize, favoriteDao) {
+export default function handleData (actionType, dispatch, storeName, data, pageSize, favoriteDao, params) {
   let fixItems = [];
   if (data && data.data) {
     if (Array.isArray(data.data)) {
@@ -27,7 +27,8 @@ export default function handleData (actionType, dispatch, storeName, data, pageS
       items: fixItems,
       projectModels: projectModels,
       storeName,
-      pageIndex: 1 // 初始页
+      pageIndex: 1, // 初始页
+      ...params
     })
   })
 }
@@ -45,5 +46,11 @@ export async function _projectModels (showItems, favoriteDao, callback) {
   }
   if (typeof callback === 'function') {
     callback(projectModels);
+  }
+}
+
+export const doCallBack = (callBack, object) => {
+  if (typeof callBack === 'function') {
+    callBack(object)
   }
 }

@@ -18,6 +18,13 @@ import DetailPage from '../page/DetailPage';
 import AxiosDemoPage from '../page/AxiosDemo'; // 网络请求测试页面
 import AsyncStorageDemo from '../page/AsyncStorageDemo'; //AsyncStorage测试页面
 import DataStorePage from '../page/DataStorePage';
+import WebViewPage from '../page/WebViewPage'; //浏览器页面
+import AboutPage from '../page/about/AboutPage';
+import AboutMePage from '../page/about/AboutMePage';
+import CustomKeyPage from '../page/CustomKeyPage';
+import SortKeyPage from '../page/SortKeyPage';
+import SearchPage from '../page/SearchPage';
+import CodePushPage from '../page/CodePushPage'
 
 export const rootCom = 'Init'; //设置跟路由
 
@@ -42,6 +49,48 @@ const MainNavigator = createStackNavigator({
   },
   DetailPage: {
     screen: DetailPage,
+    navigationOptions: {
+      header: null
+    }
+  },
+  WebViewPage: {
+    screen: WebViewPage,
+    navigationOptions: {
+      header: null
+    }
+  },
+  CustomKeyPage: {
+    screen: CustomKeyPage,
+    navigationOptions: {
+      header: null
+    }
+  },
+  AboutPage: {
+    screen: AboutPage,
+    navigationOptions: {
+      header: null
+    }
+  },
+  AboutMePage: {
+    screen: AboutMePage,
+    navigationOptions: {
+      header: null
+    }
+  },
+  SortKeyPage: {
+    screen: SortKeyPage,
+    navigationOptions: {
+      header: null
+    }
+  },
+  SearchPage: {
+    screen: SearchPage,
+    navigationOptions: {
+      header: null
+    }
+  },
+  CodePushPage : {
+    screen: CodePushPage ,
     navigationOptions: {
       header: null
     }

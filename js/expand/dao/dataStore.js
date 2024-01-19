@@ -19,14 +19,14 @@ export default class DataStore {
           resolve(wrapData);
         } else {
           this.fetchNetData(url, flag).then((data) => {
-            resolve(this.__wrapData(data));
+            resolve(this._wrapData(data));
           }).catch((error) => {
             reject(error);
           })
         }
       }).catch((error) => {
         this.fetchNetData(url, flag).then((data) => {
-          resolve(this.__wrapData(data));
+          resolve(this._wrapData(data));
         }).catch((error) => {
           reject(error);
         })

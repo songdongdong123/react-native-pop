@@ -8,7 +8,9 @@
  */
 
 import React, {Component} from 'react';
-import {StyleSheet,DeviceInfo, ActivityIndicator, View, Text, FlatList, RefreshControl } from 'react-native';
+import {StyleSheet,DeviceInfo, ActivityIndicator, 
+TouchableOpacity,
+View, Text, FlatList, RefreshControl } from 'react-native';
 import Toast from 'react-native-easy-toast';
 import {connect} from 'react-redux';
 import actions from '../redux/action';
@@ -23,59 +25,110 @@ import FavoriteUtil from '../util/FavoriteUtil';
 import PopularItem from '../common/PopularItem';
 // 自定义顶部导航组件
 import NavigationBar from '../common/NavigationBar';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import { getAccountList } from '../axios/api/account';
+//用于页面之间通讯
+import EventTypes from '../util/EventTypes';
+import EventBus from 'react-native-event-bus';
+import AnalyticsUtil from '../util/AnalyticsUtil';
+
+// 
+import { FLAG_LANGUAGE } from '../expand/dao/LanguageDao';
 
 // 顶部导航tab标签配置
 const TAB_NAMES = ['Java', 'Android', 'Ios', 'React', 'React-Native', 'PHP'];
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars'; 
-const THEME_COLOR='#f33';
 const PAEG_SIZE = 10;
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 type Props = {};
 
-export default class Popuilar extends Component<Props> {
+@connect(
+  state=>({
+    keys: state.language.keys,
+    theme: state.theme.theme
+  }),
+  {
+    onLoadLanguage: actions.onLoadLanguage
+  }
+)
+export default class Popular extends Component<Props> {
   constructor (props) {
     super(props);
+    const {onLoadLanguage} = this.props;
+    // 获取标签数据
+    onLoadLanguage(FLAG_LANGUAGE.flag_key);
   }
   componentDidMount() {
+    AnalyticsUtil.onPageStart('Popular');
   }
   _genTabs () {
     const tabs = {};
-    TAB_NAMES.forEach((item, index) => {
-      tabs[`tab${index}`] = {
-        // 这里使用的箭头函数，所以直接使用props，而不是使用this.props
-        screen: props => <PopuilarTab {...props} tabLabel={item}/>,
-        // screen: function () { //如果是普通函数，则使用this.props
-        //   return <PopuilarTab {...this.props} TabLabel={item}/>
-        // },
-        navigationOptions: {
-          title: item
+    const {keys} = this.props;
+    keys.forEach((item, index) => {
+      if (item.checked) {
+        tabs[`tab${index}`] = {
+          // 这里使用的箭头函数，所以直接使用props，而不是使用this.props
+          screen: props => <PopuilarTab {...props} tabLabel={item.name}/>,
+          // screen: function () { //如果是普通函数，则使用this.props
+          //   return <PopuilarTab {...this.props} TabLabel={item}/>
+          // },
+          navigationOptions: {
+            title: item.name
+          }
         }
       }
     });
     return tabs;
   }
+  renderRightButton () {
+    const {theme} = this.props;
+    return <TouchableOpacity
+      onPress={() => {
+        AnalyticsUtil.onEvent('event1');
+        // AnalyticsUtil.onEvent('SearchClick');
+        // AnalyticsUtil.onEvent('01');
+        // AnalyticsUtil.onEventWithMap('SearchClick',{
+        //   name: 'umeng'
+        // });
+        NavigationUtil.goPage({theme}, 'SearchPage')
+      }}
+    >
+      <View style={{padding: 5, marginRight: 8,}}>
+        <Ionicons
+          name={'ios-search'}
+          size={24}
+          style={{
+            marginRight: 8,
+            alignSelf: 'center',
+            color: 'white'
+          }}
+        />
+      </View>
+    </TouchableOpacity>
+  }
   render() {
+    // 获取标签
+    const {keys, theme} = this.props;
     // 状态栏设置
     let statusBar = {
-      backgroundColor: THEME_COLOR,
+      backgroundColor: theme.themeColor,
       barStyle: 'light-content',
     };
     // 顶部导航栏设置
     let navigationBar = <NavigationBar
       title={'最热'}
       statusBar={statusBar}
-      style={{backgroundColor: THEME_COLOR}}
+      style={{backgroundColor: theme.themeColor}}
+      rightButton={this.renderRightButton()}
     />
 
-    const TabNavigator =  createAppContainer(createMaterialTopTabNavigator(
+    const TabNavigator =  keys.length ? createAppContainer(createMaterialTopTabNavigator(
       this._genTabs(), {
         // tabBar配置选项
         tabBarOptions: {
-          inactiveTintColor: '#333',
-          activeTintColor: '#f33',
+          inactiveTintColor: theme.themeColor,
+          activeTintColor: theme.themeColor,
           tabStyle: styles.tabStyle, //选项卡的样式对象
           upperCaseLabel: false, //是否使标签大写，默认为 true。
           scrollEnabled: true, // 是否支持 选项卡滚动 默认为 false
@@ -83,14 +136,19 @@ export default class Popuilar extends Component<Props> {
             backgroundColor: '#fff',
             height: 35 // fix 开启scrollEnabled后在android上初次渲染的时候会有高度闪烁的问题，所以这里需要固定高度
           },
-          indicatorStyle: styles.indicatorStyle, //选项卡指示器的样式对象（选项卡底部的行）
+          indicatorStyle: {
+            height: 2,
+            backgroundColor: theme.themeColor
+          }, //选项卡指示器的样式对象（选项卡底部的行）
           labelStyle: styles.labelStyle, // 选项卡标签的样式对象(选项卡文字样式,颜色字体大小等)
-        }
+        },
+        lazy: true
       }
-    ));
-    return <View style={{flex:1, marginTop: DeviceInfo.isIphoneX_deprecated?30:0}}>
+    )):null;
+    return <View style={styles.container}>
       {navigationBar}
-      <TabNavigator />
+      {/* TabNavigator存在，渲染标签 */}
+      {TabNavigator&&<TabNavigator />}
     </View>
   }
 }
@@ -100,7 +158,8 @@ export default class Popuilar extends Component<Props> {
   state=>state,
   {
     onLoadPopularData: actions.onLoadPopularData,
-    onLoadMorePopular: actions.onLoadMorePopular
+    onLoadMorePopular: actions.onLoadMorePopular,
+    onFlushPopularFavorite: actions.onFlushPopularFavorite
   }
 )
 class PopuilarTab extends Component<Props> {
@@ -108,19 +167,39 @@ class PopuilarTab extends Component<Props> {
     super(props);
     const {tabLabel} = this.props;
     this.storeName =  tabLabel;
+    this.isFavoriteChanged = false;
   }
   componentDidMount() {
     this.loadData();
+    EventBus.getInstance().addListener(EventTypes.favorite_changed_popular, this.favoriteChangeListener = () => {
+      // 收藏页面状态变化的通知
+      this.isFavoriteChanged = true;
+    });
+    EventBus.getInstance().addListener(EventTypes.bottom_tab_select, this.botomTabSelectListener = (data) => {
+      // 底部tab切换的通知
+      if (data.to === 0 && this.isFavoriteChanged) {
+        this.loadData(null, true);
+      }
+    });
   }
-  loadData (loadMore) {
+  componentWillMount() {
+    // 移除监听器
+    EventBus.getInstance().removeListener(this.favoriteChangeListener);
+    EventBus.getInstance().removeListener(this.botomTabSelectListener);
+  }
+  loadData (loadMore, refreshFavorite) {
+    // refreshFavorite 是否刷新收藏状态
     // 加载数据
-    const {onLoadPopularData, onLoadMorePopular} = this.props;
+    const {onLoadPopularData, onLoadMorePopular, onFlushPopularFavorite} = this.props;
     const store = this._store();
     const url = this.genFetchUrl(this.storeName);
     if (loadMore) {
       onLoadMorePopular(this.storeName,++store.pageIndex, PAEG_SIZE, store.items, favoriteDao, callback => {
         this.refs.toast.show('没有更多了');
       })
+    } else if (refreshFavorite) {
+      // 从favorite页面回跳至popular页面时，刷新popular页面的收藏状态
+      onFlushPopularFavorite(this.storeName,store.pageIndex, PAEG_SIZE, store.items, favoriteDao);
     } else {
       onLoadPopularData(this.storeName, url, PAEG_SIZE, favoriteDao);
     }
@@ -145,8 +224,10 @@ class PopuilarTab extends Component<Props> {
   }
   renderItem (data) {
     const item = data.item;
+    const {theme} = this.props.theme
     return <PopularItem 
       projectModel={item}
+      theme={theme}
       onSelect={(callback) => {
         NavigationUtil.goPage({
           projectModel: item,
@@ -168,6 +249,7 @@ class PopuilarTab extends Component<Props> {
   }
   render() {
     let store = this._store(); // 动态获取state
+    const {theme} = this.props.theme
     return (
       <View style={styles.container}>
         <FlatList 
@@ -177,11 +259,11 @@ class PopuilarTab extends Component<Props> {
           refreshControl={
             <RefreshControl 
               title={'Loading'}
-              titleColor={THEME_COLOR}
-              colors={[THEME_COLOR]}
+              titleColor={theme.themeColor}
+              colors={[theme.themeColor]}
               refreshing={store.isLoading}
               onRefresh={() => this.loadData()}
-              tintColor={THEME_COLOR}
+              tintColor={theme.themeColor}
             />
           }
           ListFooterComponent={() => this.genIndicator()}
@@ -220,10 +302,6 @@ const styles = StyleSheet.create({
     // 这里如果固定宽度，android首次渲染的时候，tab的宽度会有问题，这里有坑
     // width: 100,
     padding:0
-  },
-  indicatorStyle: {
-    height: 2,
-    backgroundColor: '#f33'
   },
   labelStyle: {
     fontSize: 13,

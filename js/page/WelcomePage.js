@@ -1,11 +1,14 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import NavigationUtil from '../navigator/NavigationUtil';
-
+import SplashScreen from 'react-native-splash-screen'
+import AnalyticsUtil from '../util/AnalyticsUtil';
 type Props = {};
 export default class Welcome extends Component<Props> {
   componentDidMount() {
     this.timer = setTimeout(() => {
+      SplashScreen.hide();
+      AnalyticsUtil.onPageStart('Welcome');
       NavigationUtil.ResetToHomePage(this.props)
     }, 200);
   }
@@ -13,11 +16,7 @@ export default class Welcome extends Component<Props> {
     this.timer&&clearTimeout(this.timer)
   }
   render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>WelcomePage</Text>
-      </View>
-    );
+    return null;
   }
 }
 
