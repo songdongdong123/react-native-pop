@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {StyleSheet,DeviceInfo, WebView, TouchableOpacity, Text, View} from 'react-native';
+import {StyleSheet,DeviceInfo, TouchableOpacity, Text, View} from 'react-native';
+import { WebView } from 'react-native-webview';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import NavigationUtil from  '../navigator/NavigationUtil';
 import BackPressComponent from '../common/BackPressComponent';
@@ -7,10 +8,14 @@ import FavoriteDao from '../expand/dao/FavoriteDao';
 // 自定义顶部导航组件
 import NavigationBar from '../common/NavigationBar';
 import ViewUtil from '../util/ViewUtil';
+import {connect} from 'react-redux';
+import SafeAreaViewPlus from '../common/SafeAreaViewPlus';
 
-const THEME_COLOR='#f33';
 const TRENDING_URL="https://github.com/"
 type Props = {};
+@connect(
+  state=>state.theme
+)
 export default class Detail extends Component<Props> {
   constructor (props) {
     super(props);
@@ -95,16 +100,19 @@ export default class Detail extends Component<Props> {
   }
   render() {
     // 顶部导航栏设置
+    const {theme} = this.props;
     const titleLayoutStyle = this.state.title.length > 20 ?{paddingRight: 30,} : null;
     let navigationBar = <NavigationBar
       leftButton={ViewUtil.getLeftBackButton(() => this.onBack())}
       titleLayoutStyle={titleLayoutStyle}
       title={this.state.title}
-      style={{backgroundColor: THEME_COLOR}}
+      style={{backgroundColor: theme.themeColor}}
       rightButton={this.renderRightButton()}
     />
     return (
-      <View style={styles.container}>
+      <SafeAreaViewPlus
+        topColor={theme.themeColor}
+      >
         {navigationBar}
         <WebView
           ref={webView => this.webView = webView}
@@ -112,7 +120,7 @@ export default class Detail extends Component<Props> {
           onNavigationStateChange={(e) => {this.onNavigationStateChange(e)}}
           source={{uri:this.state.url}}
         />
-      </View>
+      </SafeAreaViewPlus>
     );
   }
 }

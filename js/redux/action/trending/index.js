@@ -67,3 +67,27 @@ export function onLoadMoreTrending (storeName, pageIndex, pageSize, dataArray=[]
     }, 500);
   }
 }
+
+/**
+ *  刷新页面收藏状态
+ * @param {*} storeName
+ * @param {*} pageIndex
+ * @param {*} pageSize
+ * @param {*} [dataArray=[]]
+ * @param {*} favoriteDao
+ * @returns
+ */
+export function onFlushTrendingFavorite (storeName, pageIndex, pageSize, dataArray = [], favoriteDao) {
+  return dispatch => {
+    // 本次和载入的最大数量
+    let max = pageSize * pageIndex > dataArray.length ? dataArray.length : pageIndex * pageSize;
+    _projectModels(dataArray.slice(0, max), favoriteDao, data => {
+      dispatch({
+        type: Types.FLUSH_TRENDING_FAVORITE,
+        storeName: storeName,
+        pageIndex: pageIndex,
+        projectModels: data
+      })
+    })
+  }
+}

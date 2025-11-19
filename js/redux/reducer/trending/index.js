@@ -60,6 +60,15 @@ export default function onAction (state=defaultState, action) {
         hideLoadingMore: true,
         pageIndex: action.pageIndex
       }};
+    // 刷新趋势页面的收藏状态
+    case Types.FLUSH_TRENDING_FAVORITE:
+      return {
+        ...state, 
+        [action.storeName]: {
+          ...state[action.storeName],
+          projectModels: action.projectModels
+        }
+      };
     default:
       return state;
   }

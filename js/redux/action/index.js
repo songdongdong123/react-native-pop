@@ -1,7 +1,9 @@
-import {onThemeChange} from './theme';
-import {onLoadPopularData, onLoadMorePopular} from './popular';
-import {onLoadTrendingData, onLoadMoreTrending} from './trending';
+import {onThemeChange, onThemeInit, onShowCustomThemeView} from './theme';
+import {onLoadPopularData, onLoadMorePopular, onFlushPopularFavorite} from './popular';
+import {onLoadTrendingData, onLoadMoreTrending, onFlushTrendingFavorite} from './trending';
 import {onLoadFavoriteData} from './favorite';
+import {onLoadLanguage} from './language';
+import {onSearch, onSearchCancel, onLoadMoreSearch} from './search';
 
 export default {
   onThemeChange,
@@ -9,5 +11,13 @@ export default {
   onLoadMorePopular,
   onLoadTrendingData,
   onLoadMoreTrending,
-  onLoadFavoriteData
+  onLoadFavoriteData,
+  onFlushPopularFavorite,
+  onFlushTrendingFavorite,
+  onLoadLanguage,
+  onThemeInit,
+  onShowCustomThemeView,
+  onSearch,
+  onSearchCancel,
+  onLoadMoreSearch
 }

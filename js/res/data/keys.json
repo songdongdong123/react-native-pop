@@ -1,0 +1,38 @@
+[
+  {
+    "path": "start:>1",
+    "name": "ALL",
+    "short_name": "ALL",
+    "checked": true
+  },
+  {
+    "path": "ios",
+    "name": "ios",
+    "checked": true
+  },
+  {
+    "path": "react-native",
+    "name": "React Native",
+    "checked": true
+  },
+  {
+    "path": "MySQL",
+    "name": "MySQL",
+    "checked": false
+  },
+  {
+    "path": "AngularJS",
+    "name": "AngularJS",
+    "checked": false
+  },
+  {
+    "path": "jQuery",
+    "name": "jQuery",
+    "checked": false
+  },
+  {
+    "path": "react",
+    "name": "React",
+    "checked": true
+  }
+]

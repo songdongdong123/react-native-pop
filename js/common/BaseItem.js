@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet,Image, Text, View, TouchableOpacity } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {PropTypes} from 'prop-types';
+import AnalyticsUtil from '../util/AnalyticsUtil';
 
 export default class BaseItem extends Component {
   static proTypes = {
@@ -48,10 +49,12 @@ export default class BaseItem extends Component {
     });
   }
   onPressFavorite () {
+    AnalyticsUtil.onEvent('Collection');
     this.setFavoriteState(!this.state.isFavorite);
     this.props.onFavorite(this.props.projectModel.item, !this.state.isFavorite);
   }
   _favoriteIcon () {
+    const {theme} = this.props;
     return <TouchableOpacity
       style={{padding: 6,}}
       underlayColor="transparent"
@@ -60,7 +63,7 @@ export default class BaseItem extends Component {
       <FontAwesome
         name={this.state.isFavorite?'star':'star-o'}
         size={26}
-        style={{color:'#f33'}}
+        style={{color:theme.themeColor}}
       />
     </TouchableOpacity>
   }
